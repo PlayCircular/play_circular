@@ -1,0 +1,11 @@
+{% load i18n localeurl_tags %}
+
+		<li {% if not situacion %} class="active"{% endif %}><a href="{% url 'portada' %}">{% trans "Portada" %}</a></li>
+		<li><a href="{% url 'portada-general' 'general' %}">Play Circular</a></li>
+		<li {% if situacion ==  "login" %} class="active"{% endif %}><a href="{% url 'account_login' %}">{% trans "Login" %}</a></li>
+		<li {% if situacion ==  "registrarse" %} class="active"{% endif %}><a href="{% url 'account_signup' %}">{% trans "Registrate" %}</a></li>
+		<li {% if situacion ==  "actividades" %} class="active"{% endif %}><a href="{% url 'actividad-grupo' grupo.simbolo %}">{% trans "Actividades" %}</a></li>
+		<li {% if situacion ==  "entradas" %} class="active"{% endif %}><a href="{% url 'paginas-entradas-grupo' 'entradas' grupo  %}">{% trans "Entradas" %}</a></li>
+		<li {% if situacion ==  "propuestas" %} class="active"{% endif %}><a href="{% url 'paginas-entradas-grupo' 'propuestas' grupo  %}">{% trans "Propuestas" %}</a></li>
+		<li {% if situacion ==  "grupos" %}  class="active"{% endif %}><a href="{% url 'grupos-index' %}">{% trans "Todos los grupos" %}</a></li>
+		<li {% if situacion ==  "intercambios públicos" %} class="active"{% endif %}><a href="{% url 'economia-i-p-todos' %}">{% trans "Intercambios públicos" %}</a></li>

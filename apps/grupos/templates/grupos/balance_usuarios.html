@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load i18n localeurl_tags %}
+
+{% block title %}{{ situacion|upper }} {% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+
+
+
+<section class="row">
+		
+	<header class='small-12 columns'>
+		<h4> {% trans "Balances de los usuarios del grupo"  %}: {{ grupo }}</h4>
+	</header>
+	
+	<nav class='small-12 columns'>
+		{% include "grupos/submenu_estadisticas.html" %}
+	</nav>
+
+	
+	<article class="small-12 columns">
+		<table id="tabla_1">
+		<thead>
+			<tr>
+				<td>{% trans "Usuario"  %}</td>
+				<td>{% trans "Miembro"  %}</td>
+				<td>{% trans "Cuenta"  %}</td>
+				<td>{% trans "Titulares"  %}</td>
+				<td>{% trans "Grupo"  %}</td>
+				<td>{% trans "Tipo"  %}</td>
+				<td>{% trans "Margen"  %}</td>
+				<td>{% trans "Operaciones"  %}</td>
+				<td>{% trans "Balance"  %}</td>
+				<td>{% trans "Creado"  %}</td>
+				<td>{% trans "Ultimo acceso"  %}</td>
+			</tr>
+			</thead>
+			<tbody>
+			{% for item in info %}	
+				{% for cuenta in item.sus_cuentas %}
+					{% include "grupos/balances.html" %}
+				{% endfor %}
+			{% empty %}
+				<tr><td colspan="11">{% trans "No hay registros" %}</td></tr>
+			{% endfor %}
+			</tbody>
+		</table>
+		<div id="cargando-paginas" class="pelotica-invisible small-12 columns"></div>
+
+	</article>
+
+</section>
+
+
+<script type="text/javascript">
+	{% if n_paginas.object_list and n_paginas.paginator.num_pages > 1 %}
+		var page = {{ n_paginas.number }};
+		var n_paginas = {{ n_paginas.paginator.num_pages }};
+	{% else %}
+		var page = 1;
+		var n_paginas = 1;
+	{% endif %}
+	
+	var loadOnScroll = function() {
+ 		if($(window).scrollTop() == $(document).height() - $(window).height()){
+ 			if ($(window).scrollTop() > $(document).height() - ($(window).height()*2)) {
+				$(window).unbind();
+				cargar_paginas();
+ 			}
+		};
+	};
+
+	var cargar_paginas = function() {
+		page = page + 1;
+		if (page > n_paginas) {
+			return false
+		} else {
+			$('#cargando-paginas').removeClass("pelotica-invisible").addClass("pelotica-visible");
+			$.ajax({
+				url: "{{ url }}?page=" + page,
+				success: function(html){
+					$('#tabla_1 tbody').append(html);
+					$('#cargando-paginas').removeClass("pelotica-visible").addClass("pelotica-invisible");
+				},
+				complete: function(data, textStatus){
+					$(window).bind('scroll', loadOnScroll);
+				}
+			});
+		}
+	};
+				
+$(window).bind('scroll', loadOnScroll);
+
+</script>
+
+
+{% endblock %}
+
+

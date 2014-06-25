@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+{% block metatitle%}{{ actividad.actividad }}{% endblock %}
+{% block metakeywords %}{{ actividad.palabras_clave }}{% endblock %}
+{% block metadescription %}{{ actividad.meta_descripcion }}{% endblock %}
+{% block metarobots %}{{ actividad.robots }}{% endblock %}"
+
+{% block title %}{{ actividad.actividad }}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+	<div class="small-12 columns">
+		<h4>{{ actividad.actividad }}</h4>
+	</div>
+
+	<table class="small-12 columns">
+		<tr><td colspan="2">{% include "actividades/contenido_actividad.html" %}</td></tr>
+		<tr><td colspan="2">
+			<a href="https://twitter.com/share" class="twitter-share-button" data-via="PlayCircular">Tweet</a>
+			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+			
+			<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-type="button"></div>
+			
+			<div class="g-plus" data-action="share" data-annotation="none"></div>		
+			</td>
+		</tr>
+	{% if mi_actividad %}
+		<tr><td colspan="2"><h5>{% trans 'Comentarios' %}</h5></td></tr>
+		<tr><td colspan="2">
+				{% for item in comentarios_actividad %}
+					{{ item.usuario }} > {{ item.comentario }}
+				{% endfor %}
+			</td>
+		</tr>
+	{% else %}
+		<tr><td  colspan="2"><a href="{% url 'economia-pagar-1' actividad.pk 0 0 %}" class="tiny success button">{% trans 'Pagar' %}</a></td></tr>
+		<tr><td colspan="2">
+
+			<div id="cargando_actividad" class="pelotica-invisible">
+				<div class="row panel">
+					<table class="small-12 columns" height="200"> 
+						<tr><td><div align="center"><img src="{{ STATIC_URL }}imagenes/interface/loader.gif"  alt="cargando..."/></div></td></tr>
+					</table>
+				</div>
+			</div>
+			<div id="cargador_actividad">
+				{% include "actividades/form_opinion.html" %}
+			</div>
+		</td></tr>
+	{% endif %}
+	</table>
+
+	     
+</div>
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v2.0";
+		fjs.parentNode.insertBefore(js, fjs);
+	}
+	(document, 'script', 'facebook-jssdk'));
+</script>
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'es'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/platform.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+
+{% endblock %}

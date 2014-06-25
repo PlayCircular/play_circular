@@ -1,0 +1,20 @@
+{% load thumbnail i18n localeurl_tags %}
+
+	<div  class="small-12 columns"> 
+		<h4><a href="{{ item.get_absolute_url }}" title="{{ item.titulo }}">{{ item.titulo }}</a></h4>
+		<div>{{ item.intro }}</div>
+		<div><i class="right olgado">
+			<a href="{% url 'social-perfil' item.usuario %}">@{{ item.usuario }}</a> 
+			{% trans "Publicado en: " %}{{ item.grupos }} {% trans "Hace: " %}{{ item.creada|timesince }}
+			</i>
+		</div>
+	</div>
+	<div  class="small-12 columns olgado">
+		{% trans "Visitas: " %}{{ item.n_visitas }} | 
+		{% trans "Votos: " %}{{ item.get_total_valoraciones }} | 
+		{% trans "Positivos: " %}{{ item.get_valoraciones_positivas }} | 
+		{% trans "Valoración media: " %}{{ item.get_media_valoraciones_positivas }} | 
+		{% trans "Negativos: " %}{{ item.get_valoraciones_negativas }} 
+		{% trans "Valoración media: " %}{{ item.get_media_valoraciones_negativas }} |
+		{% trans "Comentarios: " %}{{ item.get_n_comentarios }} |
+	</div>

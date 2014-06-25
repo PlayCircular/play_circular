@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+
+{% block title %} Market | {{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+
+
+
+<section class="row">
+
+	<div class="twelve columns" id="contendor-central">
+	
+		<header>
+			<h4> {{ situacion|upper }}</h4>
+		</header>
+		
+		<article>
+			<table>
+				<tr>
+					<td>Destinatario:</td><td>{{ mensaje.destinatario }}</td>
+				</tr>
+				<tr>
+					<td>Remitente:</td><td>{{ mensaje.remitente }} ({{ mensaje.email_remitente }})</td>
+				</tr>
+				<tr>
+					<td>Fecha:</td><td>{{ mensaje.creado }}</td>
+				</tr>
+				<tr>
+					<td>Leído:</td><td>{{ mensaje.leido }}</td>
+				</tr>
+				<tr>
+					<td>Asunto:</td><td>{{ mensaje.asunto }}</td>
+				</tr>
+				<tr>
+					<td colspan="2">{% autoescape off %}{{ mensaje.mensaje }}{% endautoescape %}</td>
+				</tr>
+			</table>
+		</article>
+	</div> <!--Fin contendor-central-->
+</section>
+
+
+
+
+{% endblock %}
+
+

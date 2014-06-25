@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load i18n localeurl_tags thumbnail %}
+
+
+{% block title %}{% trans "Ficha social de este usuario" %}{% endblock %}
+
+{% block content %}
+
+<section class="row">
+	<header class="small-12 columns">
+		<h4>{% trans "Ficha social de este usuario" %}</h6>
+	</header>
+
+	<article>
+
+       <table class="small-6 columns">
+
+       <tr><td colspan="2" ><h2>{{ este_perfil }}</h2></td></tr>
+
+           <tr><td>&nbsp;</td>
+               <td>
+					{% for i in este_perfil.fotos_personales.all %}
+					{% thumbnail i.foto "48x48" as im %}
+						<img src="{{ im.url }}" alt="{{ i.foto.name }}"  width="{{ im.width }}" height="{{ im.height }}"/>{% if not forloop.last %}&nbsp;{% endif %}
+					{% endthumbnail %}
+					{% endfor %}
+					
+					{% if request.user != este_perfil.usuario %}
+					<form action="{% url 'social-seguir' %}" method="POST">
+						{% csrf_token %}
+							<input type="hidden" name="usu" value="{{ este_perfil.usuario.pk }}" id="id_usu" />	
+						{% if es_seguido %}				
+							<input type="hidden" name="accion" value="0" id="id_accion" />
+							<input type="submit" value="Dejar de seguir" class="tiny success button"/>
+						{% else %}
+							<input type="hidden" name="accion" value="1" id="id_accion" />
+							<input type="submit" value="Seguir" class="tiny success button"/>	
+						{% endif %}				
+					</form>
+					{% endif %}	
+               </td>
+           </tr>
+           <tr><td>{% trans "Usuario" %}</td>
+								<td><a href="{% url 'social-perfil' este_perfil.usuario %}">@{{ este_perfil.usuario }}</a>	
+								({% if not este_perfil.ocultar_nombre %}
+										{{ este_perfil.nombre }}
+									{% endif %}	
+									{% if not este_perfil.ocultar_apellidos %}
+										{{ este_perfil.apellidos }}
+									{% endif %}	)
+								</td>
+			</tr>
+           
+           <tr><td>{% trans "Sus grupos" %}</td>
+				<td>
+					{% for grupo in grupos %}
+						{{ grupo.grupo }}{% if not forloop.last %},{% endif %}
+					{% endfor %}               
+				</td>
+           </tr>
+           <tr><td>{% trans "Pais" %}</td><td>{{ este_perfil.pais }}</td></tr>
+           <tr><td>{% trans "Provincia" %}</td><td>{{ este_perfil.provincia }}</td></tr>
+           <tr><td>{% trans "Poblacion" %}</td><td>{{ este_perfil.poblacion }}</td></tr>
+           {% if not este_perfil.ocultar_direccion %}
+           <tr><td>{% trans "Dirección" %}</td><td>{{ este_perfil.direccion }}</td></tr>
+           {% endif %}
+           {% if not este_perfil.ocultar_codigo_postal %}
+           <tr><td>{% trans "CP" %}</td><td>{{ este_perfil.codigo_postal }}</td></tr>
+           {% endif %}
+           <tr><td>{% trans "Teléfono" %}</td><td>{{ este_perfil.telefono }}</td></tr>
+           <tr><td>{% trans "Descripción personal" %}</td><td>{{ este_perfil.descripcion|removetags:"iframe script"|safe }}</td></tr>
+           {% for item in este_perfil.social_usu.all %}
+           <tr>
+				<td>{{ item.nombre }}:</td><td>{{ item.referencia }}</td>
+           </tr>
+           {% endfor %}
+           
+           <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+           <tr><td>{% trans "Número de logins" %}</td><td>{{ n_logins }}</td></tr>
+           <tr><td>{% trans "Registrado hace:" %}</td><td>{{ este_perfil.creado|timesince }}</td></tr>
+           <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+
+       </table>
+       
+       <div class="small-6 columns">
+       <br><div><b>{% trans "Ultimas actividades" %}</b> <a href="{% url 'actividad-usuario' este_perfil.usuario.pk %}">{% trans "Ver todas" %}</a> ({{ n_actividades }})</div>
+       <ul>
+		{% for item in ult_actividades %}
+			<li><a href="{{ item.get_absolute_url }}" title="{{ item }}">{{ item }}</a> | {% trans "Hace: " %}{{ item.creado|timesince }}</li>
+		{% empty %}
+			<li>{% trans "No hay registros" %}</li>
+		{% endfor %}
+		</ul>
+		
+		<br><div><b>{% trans 'Ultimas entradas' %}</b> <a href="{% url 'paginas-entradas-usu' este_perfil %}">{% trans "Ver todas" %}</a> ({{ n_entradas }})</div>
+		<ul>
+		{% for item in ult_entradas %}
+			<li><a href="{{ item.get_absolute_url }}" title="{{ item }}">{{ item }}</a> | {% trans "Hace: " %}{{ item.creada|timesince }}</li>
+		{% empty %}
+			<li>{% trans "No hay registros" %}</li>
+		{% endfor %}
+		</ul>
+		
+		<br><div><b>{% trans "Ultimos intercambios públicos" %}</b> <a href="{% url 'economia-i-p-usuario' este_perfil.usuario.pk %}">{% trans "Ver todos" %}</a> ({{ n_intercambios }})</div>
+		<ul>
+		{% for item in ult_intercambios_p %}
+			<li><a href="{% url 'social-perfil' item.origen %}">@{{ item.origen }}</a> > {{ item }} > <a href="{% url 'social-perfil' item.destino %}">@{{ item.destino }}</a> ({{ item.creado|timesince }})</li>
+		{% empty %}
+			<li>{% trans "No hay registros" %}</li>
+		{% endfor %}
+		</ul>
+       </div>
+       
+
+       
+	</article>
+
+
+{% endblock %}

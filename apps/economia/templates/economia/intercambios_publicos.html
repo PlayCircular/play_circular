@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load i18n localeurl_tags %}
+
+{% block title %}{{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+
+<section class="row">
+
+		<article>
+			<header class="small-12 columns">
+				<h5>{{ situacion_1 }}</h5>
+			</header>
+			<table class="small-12 columns" id="tabla_1">
+			<thead>
+				<tr>
+					<th>{% trans "Operación" %}</th>
+					<th>{% trans "Origen" %}</th>
+					<th>{% trans "Destino" %}</th>
+					<th>{% trans "Cuenta origen" %}</th>
+					<th>{% trans "Cuenta destino" %}</th>
+					<th>{% trans "Cantidad" %}</th>
+					<th>{% trans "Actividad" %}</th>
+					<th>{% trans "Concepto" %}</th>
+					<th>{% trans "Fecha" %}</th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for item in n_paginas.object_list %}
+					{% include "economia/intercambio_p.html" %}
+				{% empty %}
+					<tr>
+						<td colspan="9">{% trans "No hay registro de intercambios públicos" %}</td>
+					</tr>
+			{% endfor %}
+				</tbody>
+			</table>
+			<div id="cargando-paginas" class="pelotica-invisible small-12 columns"></div>
+		</article>
+
+</section>
+
+
+<script type="text/javascript">
+	{% if n_paginas.object_list and n_paginas.paginator.num_pages > 1 %}
+		var page = {{ n_paginas.number }};
+		var n_paginas = {{ n_paginas.paginator.num_pages }};
+	{% else %}
+		var page = 1;
+		var n_paginas = 1;
+	{% endif %}
+
+	var loadOnScroll = function() {
+ 		if($(window).scrollTop() == $(document).height() - $(window).height()){
+ 			if ($(window).scrollTop() > $(document).height() - ($(window).height()*2)) {
+				$(window).unbind();
+				cargar_paginas();
+ 			}
+		};
+	};
+
+	var cargar_paginas = function() {
+		page = page + 1;
+		if (page > n_paginas) {
+			return false
+		} else {
+			$('#cargando-paginas').removeClass("pelotica-invisible").addClass("pelotica-visible");
+			$.ajax({
+				url: "{{ url }}?page=" + page,
+				success: function(html){
+					$('#tabla_1 tbody').append(html);
+ 					$('#cargando-paginas').removeClass("pelotica-visible").addClass("pelotica-invisible");
+				},
+				complete: function(data, textStatus){
+					$(window).bind('scroll', loadOnScroll);
+				}
+			});
+		}
+	};
+				
+$(window).bind('scroll', loadOnScroll);
+
+</script>
+
+
+{% endblock %}
+
+
+
+

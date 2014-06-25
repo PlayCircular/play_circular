@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load i18n localeurl_tags %}
+
+
+{% block title %} {{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+{% include "actividades/form_busqueda.html" %}
+
+<div class="row" id="contendor-central">
+	<section id="listado">
+		{% if actividades %}
+			<div class="small-12 columns"> 
+				<h3>{% trans "Actividades" %} > {{ situacion }}</h3>
+			</div>
+			<div class="small-12 columns"> 
+				{% if rss == 'todas' %}
+					<a href="{% url 'rss-actividades-general' %}">
+						<img src="{{ STATIC_URL }}imagenes/interface/ico_rss.gif" alt="Suscribirse a las actividades de Play Circular"/> 
+						Suscribirse a las actividades de Play Circular
+					</a>
+				{% endif %}
+				{% if rss == 'grupo' %}
+					<a href="{% url 'rss-actividades-grupo' grupo %}">
+						<img src="{{ STATIC_URL }}imagenes/interface/ico_rss.gif" alt="Suscribirse a las actividades del grupo {{ grupo }}"/> 
+						Suscribirse a las actividades del grupo {{ grupo }}
+					</a>
+				{% endif %}
+			</div>
+			{% for actividad in n_paginas.object_list %}
+				{% if user.is_authenticated %}
+					{% include "actividades/listado_1.html" %}
+				{% else %}
+					{% include "actividades/listado_3.html" %}
+				{% endif %}
+			{% endfor %}
+			<div id="cargando-paginas" class="pelotica-invisible"></div>
+		{% else %}
+			<header class="small-12 columns">
+				<div class="panel">{% trans "Tu búsqueda no da ningún resultado" %}</div>
+			</header>
+		{% endif %}
+
+	</section>
+</div> <!--Fin contendor-central-->
+
+
+
+<script type="text/javascript">
+	// Variables globales de scroll
+	{% if n_paginas.object_list and n_paginas.paginator.num_pages > 1 %}
+		var page = {{ n_paginas.number }}; // The latest page loaded
+		var n_paginas = {{ n_paginas.paginator.num_pages }};
+	{% else %}
+		var page = 1;
+		var n_paginas = 1;
+	{% endif %}
+	
+	var loadOnScroll = function() {
+
+		if ($(window).scrollTop() > $(document).height() - ($(window).height()*1.2)) {
+ 			$(window).unbind();
+			cargar_paginas();
+
+		}
+	};
+
+	var cargar_paginas = function() {
+		page = page + 1;
+		if (page > n_paginas) {
+			return false
+		} else {
+			$('#cargando-paginas').removeClass("pelotica-invisible").addClass("pelotica-visible");
+			$.ajax({
+				url: "{{ url }}?page=" + page,
+				
+				success: function(html)	{
+					if(html){
+						$("#listado").append(html);
+						$('#cargando-paginas').removeClass("pelotica-visible").addClass("pelotica-invisible");
+					}else{
+						$('#cargando-paginas').html('<center>No hay más elementos..</center>');
+					}
+				},
+				complete: function(data, textStatus){
+					// Turn the scroll monitor back on
+					$(window).bind('scroll', loadOnScroll);
+				}
+			});
+		}
+	};
+				
+				
+$(window).bind('scroll', loadOnScroll);
+						
+</script>
+
+{% endblock %}
+
+
+

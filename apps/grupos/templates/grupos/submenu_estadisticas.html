@@ -1,0 +1,9 @@
+{% load i18n localeurl_tags %}
+
+<dl class="sub-nav">
+	<dd {% if situacion ==  "estadisticas" %} class="active"{% endif %}><a href="{% url 'grupos-estadisticas' grupo.pk %}">{% trans "Estadísticas" %}</a></dd>
+	<dd {% if situacion ==  "crecimiento de usuarios" %} class="active"{% endif %}><a href="{% url 'grupos-estadis-crecimiento_usus' grupo.pk %}">{% trans "Crecimiento de usuarios" %}</a></dd>
+	<dd {% if situacion ==  "balance de usuarios" %} class="active"{% endif %}><a href="{% url 'grupos-balance-usus' grupo.pk %}">{% trans "Balances de usuario" %}</a></dd>
+	<dd {% if situacion ==  "estadísticas de actividades" %} class="active"{% endif %}><a href="{% url 'grupos-estadis-actividad' grupo.pk %}">{% trans "Estadísticas de actividades" %}</a></dd>
+	<dd {% if situacion ==  "estadísticas de intercambio" %} class="active"{% endif %}><a href="{% url 'grupos-estadis-intercambio' grupo.pk %}">{% trans "Estadísticas de intercambio" %}</a></dd>
+</dl>

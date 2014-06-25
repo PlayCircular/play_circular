@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %} Mensajes {% endblock %}
+
+{% block content %}
+
+<div class='row display'>
+<section class="ten columns">
+{% if mensajes|length %}
+	<header>
+	<h4>Conversación completa.<h4>
+	<hr/>
+	</header>	
+
+	{% for m in mensajes %}
+	<article>
+		<header>
+			<h5>{{ m.usuario.get_full_name }} (<a href="{% url 'social-perfil' m.usuario %}">@{{ m.usuario }}</a>)</h5>
+		</header>
+		{{ m.filtrar|safe|linebreaksbr }}
+		<footer>
+			<p>
+				{% if m.reescrito %}
+					<strong>Reescrito por <a href="{% url 'social-perfil' m.reescrito_por %}">@{{ m.reescrito_por }}</a></strong>
+				{% endif %}
+				
+				{% if m.reescrito_por == request.user %}
+					<a href="{% url 'social-borrar' m.mensaje_id %}">Borrar reescrito</a><br>
+				{% endif %}
+				
+				<br>
+				
+				{% if m.respuesta %}
+					<a href="{% url 'social-conversacion' m.id %}">Ver conversacion completa</a><br>
+				{% endif %}
+				
+				<strong>Publicado: {{ m.creado }}</strong>
+				{% if m.usuario != request.user %}
+					<a href="{% url 'social-reescribir' m.id %}"><i class="icon-retweet"></i>Reescribir</a>
+					<a href="{% url 'social-responder' m.id %}"><i class="icon-share-alt"></i>Responder</a>
+				{% endif %}
+				
+				{% if m.usuario == request.user %}
+					<a href="{% url 'social-borrar' m.id %}"><i class="icon-trash"></i>Borrar</a>
+				{% endif %}
+			</p>
+			<hr/>
+		</footer>
+	</article>
+	{% endfor %}
+{% else %}
+	<header>
+		<h3>No hay ningun mensaje</h3>
+	</header>
+{% endif %}
+</section>
+
+
+<section id="tendencias">
+
+	{% if index %}
+		<h3>Trending Topics</h3>
+		{% for topic in trending %}
+			<a href="/twitter/buscar/?busqueda=%23{{ topic }}">#{{ topic }}</a><br>
+		{% endfor %}
+		<br><h3>Quizás te interese seguir a</h3>
+		{% for u in seguir %}
+			<a href="/twitter/profile/{{ u }}/">{{ u.get_full_name }} (@{{ u }})</a><br>
+			<form action="/twitter/follow/" method="post">
+				{% csrf_token %}
+				<input type="hidden" name="user" value="{{ u }}">
+				<input class="btn btn-success" type="submit" value="Seguir"><br>
+			</form>
+		{% endfor %}
+	{% endif %}
+
+</section>
+	
+</div> <!--  Fin contenidos -->
+
+{% endblock %}
+
+

@@ -1,0 +1,8 @@
+{% load i18n localeurl_tags %}
+
+<form action="{% url 'economia-actualizar-saldo-ajax' %}" method="POST" id="mi_saldo">
+{% csrf_token %}
+<div id="saldo">
+{% trans "Tu saldo es: " %}{{ d.saldo }} 
+</div>
+</form>

@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+{% block metatitle%}{{ idioma.titulo }}{% endblock %}
+{% block metakeywords %}{{ idioma.palabras_clave }}{% endblock %}
+{% block metadescription %}{{ idioma.meta_descripcion }}{% endblock %}
+{% block metarobots %}{{ idioma.robots }}{% endblock %}"
+
+{% block title %} {{ idioma.titulo }} {% endblock %}
+
+{% block extra_head %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/foundation/foundation.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/foundation/foundation.clearing.js"></script>
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="row">
+	<header  class="small-12 columns">
+	<h3>{{ idioma.titulo }}</h3>
+	</header>
+
+	<section class="small-9 columns">
+		{% if entrada.usuario.is_superuser %}
+			{{ idioma.cuerpo|safe }}
+		{% else %}
+			{{ idioma.cuerpo|removetags:"iframe script"|safe }}
+		{% endif %}
+	</section>
+	
+	<aside class="small-2 columns">
+	
+		<div>
+		
+		<a href="{% url 'social-perfil' entrada.usuario %}">@{{ entrada.usuario }}</a>
+		</div>
+		</br>
+		
+		<div>
+		<ul class="clearing-thumbs" data-clearing>
+			{% for foto in perfil_autor.fotos_personales.all %}
+				<li><a class="th" href="{{ MEDIA_URL }}{{ foto.foto }}">
+				{% thumbnail foto.foto "30x30" as im %}
+				<img src="{{ im.url }}" alt="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"/>{% if not forloop.last %}&nbsp;{% endif %}
+				{% endthumbnail %}
+				</a></li>
+			{% endfor %}
+		</ul>
+		</div>
+		</br>
+	
+		<div>
+		<b>{% trans "Publicado en:" %}</b>
+		{% for grupo in entrada.grupo.all %}
+			{{ grupo }}{% if not forloop.last %},{% endif %}
+		{% endfor %}
+		</div>
+		</br>
+		
+		<div>
+		{% if idiomas_categoria %}
+		<b>{% trans "Categorias:" %}</b>
+		{% for categoria in idiomas_categoria %}
+			<a href="{% url 'entradas-categoria' categoria.categoria.pk %}">
+			{{ categoria.nombre }}</a>{% if not forloop.last %}, {% endif %}
+		{% endfor %}
+		</div>
+		</br>
+		{% endif %}
+		{% if idioma.tags.all %}
+		<div>
+		<b>{% trans "Etiquetas:" %}</b>
+		{% for tag in idioma.tags.all %}
+			<a href="{% url 'entradas-tag' tag %}" title="{{ tag }}">{{ tag }}</a> {% if not forloop.last %}, {% endif %}
+		{% endfor %}
+		</div>
+		</br>
+		{% endif %}
+		<div>
+		<h5>{% trans "Idiomas:" %}</h5>
+			{% for item in entrada.idiomas_disponibles %}
+				<a href="{{ item.get_absolute_url|chlocale:item.idioma }}">{{ item.idioma }}</a>{% if not forloop.last %} | {% endif %}
+			{% endfor %}
+		</div>
+		</br>
+		
+		<div>
+		<b>{% trans "Fecha:" %}</b>
+			{{ entrada.creada|date:"d/m/Y" }}
+		</div>
+		</br>
+		
+		<div>
+			<b>{% trans "Visitas: " %}</b>{{ entrada.n_visitas }}<br>
+			<b>{% trans "Valoraciones: " %}</b>{{ entrada.get_total_valoraciones }}<br>
+			<b>{% trans "Positivas: " %}</b>{{ entrada.get_valoraciones_positivas }}<br>
+			<b>{% trans "Media: " %}</b>{{ entrada.get_media_valoraciones_positivas }}<br>
+			<b>{% trans "Negativas: " %}</b>{{ entrada.get_valoraciones_negativas }}<br>
+			<b>{% trans "Media: " %}</b>{{ entrada.get_media_valoraciones_negativas }}<br>
+		</div>
+		</br>
+
+	</aside>
+	
+</div>
+
+{% if fotos_e %}
+<div class="row">
+	<section class="small-9 columns">
+		<ul class="clearing-thumbs" data-clearing>
+		{% for foto in fotos_e %}
+			<li><a class="th" href="{{ MEDIA_URL }}{{ foto }}">
+			{% thumbnail foto "60x60" as im %}
+				<img src="{{ im.url }}"  alt="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"/>
+			{% endthumbnail %}
+			</a></li>
+		{% endfor %}
+		</ul>
+	</section>
+</div>
+
+{% endif %}
+
+{% if user.is_authenticated %}
+
+<div class="row">
+	<h5>{% trans "Valoración:" %}</h5>
+
+	<form action="{% url 'pagina-valorar' %}" method="POST">
+	{% csrf_token %}
+		<div class="small-3 columns">
+			<input name="a_favor" type="radio" id="me_gusta" value="1" {% if rating and rating.a_favor == 1 %} checked="checked"{% endif %}><label for="me_gusta">Me gusta</label>
+			<input name="a_favor" type="radio" id="no_me_gusta" value="0" {% if rating and rating.a_favor == 0 %} checked="checked"{% endif %}><label for="no_me_gusta">No me gusta</label>
+		</div>
+		<div class="small-3 columns">
+			<label for="valor">{% trans 'Valoración' %}:</label>
+			<select name="valor" id="valor">
+				{% if rating %} 
+					<option value="{{ rating.valor }}" selected>{{ rating.valor }}</option>
+				{% else %}	
+					<option value="0" selected>0</option>
+				{% endif %}
+				<option value="0">0</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+			</select>
+			
+			<input type="hidden" name="usuario" value="{{ request.user.pk }}" id="id_usuario" />
+			<input type="hidden" name="entrada" value="{{ entrada.pk }}" id="id_entrada" />
+			<input type="hidden" name="rating" {% if rating %} value="{{ rating.pk }}" {% else %} value="0"{% endif %} id="id_rating" />
+		</div>
+		<div class="small-3 columns end">
+			<input type="submit" value="{% trans 'Valorar' %}"  class="tiny success button"/>
+		</div>
+	
+	</form>
+
+</div>
+
+{% endif %}
+
+
+<div class="row">
+
+	<a href="https://twitter.com/share" class="twitter-share-button" data-via="PlayCircular">Tweet</a>
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+	
+	<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-type="button"></div>
+	
+	<div class="g-plus" data-action="share" data-annotation="none"></div>
+	
+</div>
+
+{% if n_entradas_relacionadas > 0 %}
+</br>
+<div class="row">
+	<h5>{% trans "Entradas relacionadas:" %}</h5>
+	<section class="small-9 columns">
+		<ul>
+		{% for e in entrada.entradas_relacionadas.all %}
+			<li><a href="{{ e.get_absolute_url }}">{{ e }}</a></li>
+		{% endfor %}
+		</ul>
+	</section>
+</div>
+{% endif %}
+
+{% if entrada.comentarios %}
+	<b>{% trans "Comentarios:" %}</b>
+	{% for item in comentarios %}
+	<div class="row">
+
+		<div class="small-7 columns">
+			{% if item.perfil.una_foto.foto  %}
+			<ul class="clearing-thumbs" data-clearing>
+			<li>
+				{% thumbnail item.perfil.una_foto.foto "24x24" as im %}
+				<a class="th" href="{{ MEDIA_URL }}{{ item.perfil.una_foto.foto }}"><img src="{{ im.url }}"  alt="{{ im.name }}" width="{{ im.width }}" height="{{ im.height }}"/></a>
+				{% endthumbnail %}
+				| <a href="{% url 'social-perfil' item.perfil %}">@{{ item.perfil }}</a>
+				</li>
+				</ul>
+			{% endif%}
+			
+		</div>
+		<div class="small-7 columns">
+			{{ item }}
+		</div>
+		<div class="small-7 columns">
+			<i class="right">{% trans "Hace: " %}{{ item.creado|timesince }}</i>
+		</div>
+		<div class="small-1 columns">
+			<form action="{% url 'comentario-valorar' %}" method="POST">
+				{% csrf_token %}
+				<input type="hidden" name="a_favor" value="1"/>
+				<input type="hidden" name="comentario" value="{{ item.pk }}" id="id_comentario" />
+				<input type="image" src="{{ STATIC_URL }}imagenes/interface/mano_arriba_48.png" title='{% trans "A favor" %}' alt="mano_arriba_48.png.png" width="24px" />
+				({{ item.votos_positivos }})
+			</form>
+		</div>
+		<div class="small-1 columns end">
+			<form action="{% url 'comentario-valorar' %}" method="POST">
+				{% csrf_token %}
+				<input type="hidden" name="a_favor" value="0"/>
+				<input type="hidden" name="comentario" value="{{ item.pk }}" id="id_comentario" />
+				<input type="image" src="{{ STATIC_URL }}imagenes/interface/mano_abajo_48.png" title='{% trans "En contra" %}'  alt="mano_abajo_48.png"  width="24px"/>
+				({{ item.votos_negativos }})
+			</form>
+		</div>
+	</div>
+	{% empty %}
+	<div class="row"><div class="small-7 columns">{% trans "No hay comentarios." %}</div></div>
+	{% endfor %}	
+
+{% endif %}
+
+{% if user.is_authenticated and entrada.comentarios %}
+
+<div class="row">
+	<section class="small-9 columns">
+	<form action="{% url 'ver-entrada' entrada.pk idioma.slug %}" method="POST">
+		<table>
+			{% csrf_token %}
+			{{ form.as_table }}
+			<tr><td colspan="2"><input type="submit" value="Comentar" class="small success button"/></td></tr>
+		</table>
+	</form>
+	</section>
+</div>
+
+{% endif %}
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v2.0";
+		fjs.parentNode.insertBefore(js, fjs);
+	}
+	(document, 'script', 'facebook-jssdk'));
+</script>
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'es'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/platform.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+
+{% endblock %}
+
+
+

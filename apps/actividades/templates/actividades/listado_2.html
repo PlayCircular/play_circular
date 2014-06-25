@@ -1,0 +1,145 @@
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+{% if opinando %}
+
+	<div class="small-6 columns">
+		{% if n_actividades_x_opinar > 0 %}
+		<span class="round regular label"><h5>{% trans 'Actividades pendientes de valorar' %}:{{ n_actividades_x_opinar }}</h5></span> 
+		{% else %}
+		<span class="round secondary label"><h5>{% trans 'Ya has valorado todo en tus comunidades' %}</h5></span> 
+		{% endif %}
+	</div>
+
+	<div class="small-6 columns">
+		<b>{% trans 'Todas las actividades Página' %} {{ pagina }} {% trans 'de' %} {{ n_paginas }}</b>
+	</div>
+
+{% endif %}
+
+<div class="small-12 columns listado">
+
+	<div class="small-12 columns olgado">
+	
+	{% include "actividades/form_opinion.html" %}
+	
+	</div>
+
+	<div class="small-6 columns"> 
+		<h4><a href="{{ actividad.get_absolute_url }}" title="{{ actividad.actividad }}">{{ actividad.actividad }}</a> ({{ actividad.tipo }})</h4>
+		<ul class="clearing-thumbs" data-clearing>
+		{% for i in actividad.fotos_actividad.all %}
+			<li><a class="th" href="{{ MEDIA_URL }}{{ i.foto }}">
+				{% thumbnail i.foto "80x80" as im %}
+				<img src="{{ im.url }}" alt="{{ i.url }}" width="{{ im.width }}" height="{{ im.height }}"/>{% if not forloop.last %}&nbsp;{% endif %}
+				{% endthumbnail %}
+				</a>
+			</li>
+		{% endfor %}
+		</ul>
+	</div>
+
+	<div class="small-3 columns"> 
+	
+	<span class="round regular label"><h6>{{ actividad.precio_moneda_social }} {{ actividad.monedas }}</h6></span></br></br>
+	<span class="round secondary label">
+		{% trans "Publicado en:" %}
+		{% for grupo in actividad.grupo.all %}
+			{{ grupo }}{% if not forloop.last %},{% endif %}
+		{% endfor %}
+	</span>
+
+	</div>
+
+	<div class="small-3 columns"> 
+		<ul class="clearing-thumbs" data-clearing>
+			{% for foto in actividad.get_fotos_usu %}
+				<li><a class="th" href="{{ MEDIA_URL }}{{ foto.foto }}">
+				{% thumbnail foto.foto "30x30" as im %}
+				<img src="{{ im.url }}" alt="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"/>{% if not forloop.last %}&nbsp;{% endif %}
+				{% endthumbnail %}
+				</a></li>
+			{% endfor %}
+			
+		</ul>
+		<a href="{% url 'social-perfil' actividad.usuario %}">@{{ actividad.usuario }}</a></br>
+		{% if actividad.tags %}
+		<div>{% trans "Etiquetas: " %}
+			{% for tag in actividad.tags %}
+			<a href="{% url 'actividad-tag' tag %}" title="{{ tag }}">{{ tag }}</a> {% if not forloop.last %}, {% endif %}
+			{%endfor%}
+		</div>
+		{% endif %}
+		{% if actividad.categoria %}
+		<div>{% trans "Categoria: " %} 
+			<a href="{% url 'actividad-categoria' actividad.categoria.pk %}">
+			{{ actividad.categoria }}</a>
+		</div>
+		{% endif %}
+		<div>{% trans "Idiomas: " %}
+			{% for item in actividad.idiomas_disponibles %}
+				<a href="{{ item.get_absolute_url|chlocale:item.idioma }}">{{ item.idioma }}</a>{% if not forloop.last %} | {% endif %}
+			{% endfor %}
+		</div>
+
+	</div>
+
+	<div class="small-12 columns olgado">{{ actividad.descripcion|removetags:"html head body"|safe }} </div>
+
+	<div class="small-12 columns olgado">
+
+		<div class="medium-2 columns">
+		{% trans "Nº visitas: " %} {{ actividad.n_visitas }} </br>
+		{% trans "Nº compras: " %} {{ actividad.n_compras }} </br>
+		{% trans "Nº opiniones: " %} {{ actividad.n_votaciones }}
+		</div>
+		<div class="medium-3 columns">
+		{% trans "Gusta a : " %} {{ actividad.n_interes_particular }}{% trans " personas. Rating medio: " %}{{ actividad.media_rating_para_mi_antes }}
+		</div>
+		
+		<div class="medium-5 columns">
+		{% trans "A " %} {{ actividad.n_interes_comunidad }}{% trans " personas le gusta para la comunidad. Rating medio: " %}{{ actividad.media_rating_para_bien_comun }}
+		</div>
+		
+		<div class="medium-2 columns">
+		{% trans 'Creado hace' %} {{ actividad.creado|timesince }}
+		</div>
+		
+	</div>
+	
+	<div class="small-12 columns olgado">
+
+		<a href="https://twitter.com/share" class="twitter-share-button" data-via="PlayCircular">Tweet</a>
+		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+		
+		<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-type="button"></div>
+		
+		<div class="g-plus" data-action="share" data-annotation="none"></div>
+		
+	</div>
+
+</div>
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v2.0";
+		fjs.parentNode.insertBefore(js, fjs);
+	}
+	(document, 'script', 'facebook-jssdk'));
+</script>
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'es'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/platform.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+
+
+

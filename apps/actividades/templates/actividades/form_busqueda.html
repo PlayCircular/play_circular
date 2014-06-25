@@ -1,0 +1,48 @@
+{% load i18n localeurl_tags %}
+
+<section class='row'>
+	<form action="{% url 'actividad-busqueda' %}" method="POST" id="form_busqueda">
+		<table class="small-11 small-centered columns">
+			{% csrf_token %}
+			<tr>
+			<td><input id="id_busqueda" type="text" name="busqueda" maxlength="100" value="{{ datos.busqueda }}"  placeholder='{% trans "Búsqueda de actividades" %}' /></td>
+				<td>{% trans "Clase" %}:</td>
+				<td><select name="clase" id="id_clase">
+						<option value="{{ datos.clase }}" selected="selected">{{ datos.clase }}</option>
+						<option value=""></option>
+						<option value="bienes">{% trans "Bienes" %}</option>
+						<option value="servicios">{% trans "Servicios" %}</option>
+					</select>
+				</td>
+				<td>{% trans "Tipo" %}:</td>
+				<td><select name="tipo" id="id_tipo">
+						<option value="{{ datos.tipo }}" selected="selected">{{ datos.tipo }}</option>
+						<option value=""></option>
+						<option value="oferta">{% trans "Oferta" %}</option>
+						<option value="demanda">{% trans "Demanda" %}</option>
+					</select>
+				</td>
+				<td>{% trans "Grupos" %}:</td>
+				<td><select name="grupos" id="id_grupos">
+						{% if datos.grupos %}
+						<option value="{{ datos.grupos }}" selected="selected">{{ datos.grupos }}</option>
+						{% else %}
+						<option value="Mis grupos" selected="selected">{% trans "Mis grupos" %}</option>
+						{% endif %}
+						<option value="Mis grupos">{% trans "Mis grupos" %}</option>
+						<option value="Todos los grupos">{% trans "Todos los grupos" %}</option>
+					</select>
+				</td>
+				<td>{% trans "Ordenar por" %}:</td>
+				<td><select name="orden" id="id_orden">
+						<option value="{{ datos.orden }}" selected="selected">{{ datos.orden }}</option>
+						<option value=""></option>
+						<option value="clase">{% trans "clase" %}</option>
+						<option value="tipo">{% trans "tipo" %}</option>
+					</select>
+				</td>
+				<td><input type="submit" value="Buscar" class="tiny success button"/></td>
+			</tr>
+		</table>
+	</form>
+</section>

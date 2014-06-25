@@ -1,0 +1,11 @@
+{% load i18n localeurl_tags %}
+
+{% if busqueda_qs %}
+	{% for item in n_paginas.object_list %}
+		{% ifchanged %}
+		{% include "usuarios/listado_usuarios.html" %}
+		{% endifchanged %}
+	{% endfor %}
+{% else %}
+	<tr><td colspan="9">{% trans "No hay registros" %}</td></tr>
+{% endif %}

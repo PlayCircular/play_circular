@@ -1,0 +1,13 @@
+{% load i18n localeurl_tags %}
+
+	<tr>
+		<td>{{ item.n_intercambio }}</td>
+		<td><a href="{% url 'social-perfil' item.origen %}">@{{ item.origen }}</a></td>
+		<td><a href="{% url 'social-perfil' item.destino %}">@{{ item.destino }}</a></td>
+		<td>{{ item.cuenta_origen }}</td>
+		<td>{{ item.cuenta_destino }}</td>
+		<td>{{ item.cantidad }}</td>
+		<td>{{ item.actividad }}</td>
+		<td>{{ item.concepto }}</td>
+		<td>{{ item.creado|date:"d/m/y H:i" }}</td>
+	</tr>

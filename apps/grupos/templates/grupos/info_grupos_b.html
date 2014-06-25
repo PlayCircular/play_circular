@@ -1,0 +1,41 @@
+{% load i18n localeurl_tags thumbnail %}
+
+	<table>
+		<tr>
+			<td>{% trans "Grupo" %}</td>
+			<td>{% trans "Provincia" %}</td>
+			<td>{% trans "Población" %}</td>
+			<td>{% trans "Miembros" %}</td>
+			<td>{% trans "Admins" %}</td>
+			<td>{% trans "Actividades" %}</td>
+			<td>{% trans "Nº Op." %}</td>
+			<td>{% trans "Valor medio" %}</td>
+			<td>{% trans "Op. por día" %}</td>
+			<td>{% trans "Op. últ. mes" %}</td>
+			<td>{% trans "Op. últ. semana" %}</td>
+			<td>{% trans "Creado hace" %}</td>
+		</tr>
+		{% for item in info_grupos %}
+		<tr>
+			<td>
+				{% if item.logo %}<img src='{% thumbnail item.logo "24x24" crop="center" as im %}{{ im.url }}{% endthumbnail %}'>{% endif %}
+				<a href="{% url 'portada-grupo' item.simbolo item.nombre|slugify %}" title="{{ item.nombre }}">{{ item }}</a>
+			</td>
+			<td>{{ item.provincia }}</td>
+			<td>{{ item.poblacion }}</td>
+			<td>{{ item.n_miembros }}</td>
+			<td><a href="{% url 'grupos-get-admins' item.pk %}" title='{% trans "Ver los administradores" %}'>{{ item.n_admin }}</a></td>
+			<td>{{ item.n_actividades }}</td>
+			<td>{{ item.n_operaciones }}</td>
+			<td>{{ item.valor_medio_op }}</td>
+			<td>{{ item.operaciones_x_dia }}</td>
+			<td>{{ item.op_ultimo_mes }}</td>
+			<td>{{ item.op_ultima_semana }}</td>
+			<td>{{ item.creado|timesince }}</td>
+		</tr>
+		{% empty %}
+		<tr>
+			<td colspan="12">{% trans "No existen grupos activos" %}</td>
+		</tr>
+		{% endfor %}
+	</table>

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags portada_filtros %}
+
+{% block metatitle%}{{ idioma.grupo }}{% endblock %}
+{% block metakeywords %}{{ idioma.palabras_clave }}{% endblock %}
+{% block metadescription %}{{ idioma.meta_descripcion }}{% endblock %}
+{% block metarobots %}{{ idioma.robots }}{% endblock %}"
+
+{% block title %} {{ idioma.grupo }} {% endblock %}
+
+{% block extra_head %}
+
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+	<header class="small-12 columns">
+		<h3>{{ idioma.grupo.nombre }}</h3>
+	</header>
+	
+	<h4>{{ situacion }}</h4>
+
+	<section class="small-10 columns">
+		{% autoescape off %}
+			{{ idioma.condiciones }}
+		{% endautoescape %}
+	</section>
+	
+	<aside class="small-2 columns">
+	
+		<div>
+		<h5>{% trans "Idiomas:" %}</h5>
+<!--			{ for item in pagina.idiomas_disponibles }
+				<a href="{ request.path|chlocale:item }">{ item }</a>{ if not forloop.last } | { endif }
+			{ endfor }-->
+		</div>
+
+
+	</aside>
+	
+</div>
+
+{% endblock %}

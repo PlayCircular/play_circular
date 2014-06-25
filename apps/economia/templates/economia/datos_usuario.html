@@ -1,0 +1,39 @@
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+	<table class="small-12 columns">
+		<tr><td colspan="2"><h4>{% trans "Datos del usuario" %}</h4></td><tr>
+		<tr><td>{% trans "Usuario" %} </td><td>
+
+			<a href="{% url 'social-perfil' destino %}">@{{ destino }}</a>	
+			{% if perfil_destino.get_nombre_visible %}({{ perfil_destino.get_nombre_visible }}){% endif %}
+			
+			{% for i in perfil_destino.fotos_personales.all %}
+				{% thumbnail i.foto "80x80" as im %}
+					<img src="{{ im.url }}" alt="{{ i.foto.name }}" width="{{ im.width }}" height="{{ im.height }}"/>{% if not forloop.last %}&nbsp;{% endif %}
+				{% endthumbnail %}
+			{% endfor %} 
+				
+			</td>
+		</tr>
+		<tr><td>{% trans "Grupos a los que pertenece" %} @{{ destino }}:</td>
+			<td>
+				{% for grupo in grupos_destino %}
+					{{ grupo.grupo }}{% if not forloop.last %},{% endif %}
+				{% endfor %}               
+			</td>
+		</tr>
+		{% if perfil_destino.provincia %}
+		<tr><td>{% trans "Provincia " %}</td><td>{{ perfil_destino.provincia }}</td></tr>
+		{% endif %}
+		{% if perfil_destino.poblacion %}
+		<tr><td>{% trans "Población " %}</td><td>{{ perfil_destino.poblacion }}</td></tr>
+		{% endif %}
+		{% if not perfil_destino.ocultar_direccion and perfil_destino.direccion %}
+		<tr><td>{% trans "Dirección " %}</td><td>{{ perfil_destino.direccion }}</td></tr>
+		{% endif %}
+		<tr><td>{% trans "Email " %}</td><td>{{ perfil_destino.mi_email }}</td></tr>
+		<tr><td>{% trans "Teléfono " %}</td><td>{{ perfil_destino.telefono }}</td></tr>
+		<tr><td>{% trans "Nº de logins " %}</td><td>{{ perfil_destino.logins }}</td></tr>
+		<tr><td>{% trans "Ultimo login " %}</td><td>{{ perfil_destino.usuario.last_login|timesince }}</td></tr>
+	</table>

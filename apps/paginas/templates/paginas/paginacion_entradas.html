@@ -1,0 +1,14 @@
+{% load i18n localeurl_tags %}
+
+{% if entradas %}
+	{% for item in entradas %}
+		{% include "paginas/entrada.html" %}
+	{% endfor %}	
+{% else %}
+	<div class="small-12 columns listado">
+		{% trans "No hay más registros" %}
+	</div>
+{% endif %}
+
+
+

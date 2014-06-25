@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags portada_filtros %}
+
+{% block metatitle%}{{ idioma.grupo }}{% endblock %}
+{% block metakeywords %}{{ idioma.palabras_clave }}{% endblock %}
+{% block metadescription %}{{ idioma.meta_descripcion }}{% endblock %}
+{% block metarobots %}{{ idioma.robots }}{% endblock %}"
+
+{% block title %} {% trans "Configuración " %} {{ idioma.grupo }} {% endblock %}
+
+{% block extra_head %}
+
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+	<header class="small-12 columns">
+		<h3>{% trans "Configuración del grupo " %}{{ idioma.grupo.nombre }}</h3>
+	</header>
+
+	<section class="small-12 columns">
+			<table>
+				<tr>
+				<td>{% trans "Grupo:" %}</td><td>{{ grupo }}</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+					{% if grupo.logo %}
+					{% thumbnail grupo.logo "80x80" as im %}
+						<img src="{{ im.url }}" alt="{{ grupo.logo_grupo.name }}"  width="{{ im.width }}" height="{{ im.height }}"/>
+					{% endthumbnail %}
+					{% endif %} 
+					{% for item in grupo.mas_fotos_grupo.all %}
+						{% thumbnail item.foto "80x80" as im %}
+							<img src="{{ im.url }}" alt="{{ item.foto.name }}" width="{{ im.width }}" height="{{ im.height }}"/>{% if not forloop.last %}&nbsp;{% endif %}
+					   {% endthumbnail %}
+					{% endfor %}
+					</td>
+				</tr>
+				<tr>
+				<td>{% trans "Nombre de la moneda:" %}</td><td>{{ grupo.unidad_s }}</td>
+				</tr>
+				<tr>
+				<td>{% trans "Equivalencia de la unidad:" %}</td><td>{{ config.equivalencia_unidad }} euros</td>
+				</tr>
+				<tr>
+				<td>{% trans "Equivalencia de la hora:" %}</td><td>{{ config.equivalencia_hora }} {{ grupo.unidad_p }}</td>
+				</tr>
+				<tr>
+				<td>{% trans "Margenes del grupo:" %}</td>
+					<td>
+					{% trans "Superior: " %}{{ config.margen_superior_grupo }} {{ grupo.unidad_p }}<br>
+					{% trans "Inferior: " %}{{ config.margen_inferior_grupo }} {{ grupo.unidad_p }}
+					</td>
+				</tr>
+				<tr>
+				<td>{% trans "Margenes de grupo dinámico:" %}</td><td>{{ config.margen_grupo_dinamico|yesno:"Si,No" }}</td>
+				</tr>
+				<td>{% trans "Margenes de los usuarios:" %}</td>
+					<td>
+						{% for margen in margenes %}
+							{{ margen }}</br>
+						{% endfor %}
+					</td>
+				</tr>
+				<tr>
+				<td>{% trans "Margenes de miembros dinámico:" %}</td><td>{{ config.margenes_usuarios_dinamicos|yesno:"Si,No"  }}</td>
+				</tr>
+				<tr>
+				<td>{% trans "Impuestos:" %}</td><td>{{ config.impuestos_transaccion }} %</td>
+				</tr>
+				<tr>
+				<td>{% trans "Tiene oxidación:" %}</td><td>{{ config.oxidacion|yesno:"Si,No"  }}</td>
+				</tr>
+				<tr>
+				<td>{% trans "Tasa de oxidación:" %}</td><td>{{ config.interes_negativo }}</td>
+				</tr>
+				<tr>
+				<td>{% trans "Periodicidad de la tasa:" %}</td><td>{{ config.periodicidad_interes }}</td>
+				</tr>			
+				<tr>
+				<td>{% trans "Tipo de alta:" %}</td><td>{{ config.tipo_alta }}</td>
+				</tr>
+				<tr>
+				<td>{% trans "Permite el comercio intergrupos: " %}</td><td>{{ config.comercio_intergrupos|yesno:"Si,No"  }}</td>
+				</tr>
+				<tr>
+				<td>{% trans "Impuestos intergrupos " %}</td><td>{{ config.impuestos_intergrupos }} %</td>
+				</tr>	
+				<tr>
+				<td>{% trans "País:" %}</td><td>{{ grupo.pais }}</td>
+				</tr>
+				<tr>
+				<td>{% trans "Provincia:" %}</td><td>{{ grupo.provincia }}</td>
+				</tr>
+				<tr>
+				<td>{% trans "Población:" %}</td><td>{{ grupo.poblacion }}</td>
+				</tr>
+				<tr>
+				<td>{% trans "Dirección:" %}</td><td>{{ grupo.direccion }}</td>
+				</tr>
+				<tr>
+				<td>{% trans "CP:" %}</td><td>{{ grupo.codigo_postal }}</td>
+				</tr>
+				<tr>
+				<td>{% trans "Coordenadas:" %}</td><td>{{ grupo.google_maps_center }}</td>
+				</tr>
+				<tr>
+				<td>{% trans "Teléfono:" %}</td><td>{{ grupo.telefono }}</td>
+				</tr>
+				<tr>
+				<td>{% trans "Email de contacto:" %}</td><td>{{ grupo.email }}</td>
+				</tr>
+				{% for item in grupo.social_grupo.all %}
+				<tr>
+					<td>{{ item.nombre }}:</td><td>{{ item.referencia }}</td>
+				</tr>
+				{% endfor %}
+			</table>
+	</section>
+
+	
+</div>
+
+{% endblock %}

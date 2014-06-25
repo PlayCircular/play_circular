@@ -1,0 +1,42 @@
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+{% if permitido == 1 %}
+
+	<table class="small-7 columns">
+		<tr><td colspan="2"><h4>{% trans "Datos a confirmar" %}</h4></td><tr>
+		<tr><td>{% trans "Cuenta origen " %}</td><td>{{ dic.cuenta_origen }}, {{ dic.cuenta_origen.alias }}. Saldo: {{ dic.cuenta_origen.saldo }}</td></tr>
+		<tr><td>{% trans "Actividad " %}</td><td>{{ dic.actividad }}</td></tr>
+		{% if dic.cantidad_original == dic.cantidad %}
+		<tr><td>{% trans "Cantidad " %}</td><td>{{ dic.cantidad_original }} {{ dic.moneda }}</td></tr>
+		{% else %}
+		<tr><td>{% trans "Cantidad antes de impuestos " %}</td><td>{{ dic.cantidad_original }} {{ dic.moneda }}</td></tr>
+		<tr><td><small class="error">{% trans "Cantidad que le llegará tras los impuestos" %}</small></td><td><small class="error">{{ dic.cantidad }} {{ dic.moneda }}</small></td></tr>
+		{% endif %}
+		<tr><td>{% trans "Cuenta destino " %}</td><td>{{ dic.cuenta_destino }}, {{ dic.cuenta_destino.alias }}. Saldo: {{ dic.cuenta_destino.saldo }}</td></tr>
+		<tr><td>{% trans "Concepto " %}</td><td>{{ dic.concepto }}</td></tr>
+		<tr><td>{% trans "Intercambio público " %}</td><td>{{ dic.publico }}</td></tr>
+		<tr><td>{% trans "Descripción " %}</td><td>{{ dic.descripcion }}</td></tr>
+	</table>
+
+{% endif %}
+
+<form action="{% url 'economia-pagar-2' %}" method="POST">
+	<table class="small-7 columns">
+		{% csrf_token %}
+		{% for field in form %}
+			{% if field.id_for_label == 'id_permitido' %}
+				<input type="hidden" id="{{ field.id_for_label }}" name="{{ field.html_name }}" value="{{ permitido }}"/>
+			{% else %}
+				{{ field }}
+			{% endif %}
+		{% endfor %}
+		<tr>
+			<td>
+				<a href="{{ url }}" class="small success button">Volver</a>
+				{% if permitido == 1 %}<input type="submit" value="{% trans 'Confirmar el pago' %}" class="small success button"/>{% endif %}
+			</td>
+		</tr>	
+	</table>
+</form>
+

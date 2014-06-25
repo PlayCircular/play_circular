@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+{% block title %} {{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+
+<div class="row" id="contendor-central">
+
+<section>
+
+	<header class="small-12 columns">
+		<h4> {% trans "Administradores del grupo " %}</h4>
+	</header>
+	
+	<article class="small-12 columns">
+	
+		<ul>
+			<li>
+				{% if grupo.logo %}<img src='{% thumbnail grupo.logo "24x24" crop="center" as im %}{{ im.url }}{% endthumbnail %}'> > {% endif %}
+				<a href="{% url 'portada-grupo' grupo.pk grupo.nombre|slugify %}" title="{{ grupo.nombre }}">{{ grupo.nombre }}</a> > 
+				{{ idioma.eslogan }}
+			</li>
+			{% for item in admins %}
+			<li><a href="{% url 'social-perfil' item.usuario %}">@{{ item.usuario }}</a></li>
+			{% endfor %}
+		</ul>
+
+	</article>
+
+</section>
+
+</div> <!--Fin contendor-central-->
+
+
+{% endblock %}
+
+

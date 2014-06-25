@@ -1,0 +1,36 @@
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+<tr><td>{% trans "Usuario" %} </td><td>
+
+	<a href="{% url 'social-perfil' destino %}">@{{ destino }}</a>	
+	({% if not perfil_destino.ocultar_nombre %}
+		{{ perfil_destino.nombre }}
+	{% endif %}	
+	{% if not perfil_destino.ocultar_apellidos %}
+		{{ perfil_destino.apellidos }}
+	{% endif %}	)
+	</td>
+</tr>
+<tr><td>{% trans "Fotos de " %}  @{{ destino }}</td><td>
+
+		{% for i in perfil_destino.fotos_personales.all %}
+			{% thumbnail i.foto "80x80" as im %}
+				<img src="{{ im.url }}" alt="{{ i.foto.name }}" width="{{ im.width }}" height="{{ im.height }}"/>{% if not forloop.last %}&nbsp;{% endif %}
+			{% endthumbnail %}
+		{% endfor %} 
+	</td>
+	</tr>
+<tr><td>{% trans "Grupos a los que pertenece" %} @{{ destino }}</td>
+	<td>
+		{% for grupo in grupos_destino %}
+			{{ grupo.grupo }}{% if not forloop.last %},{% endif %}
+		{% endfor %}               
+	</td>
+</tr>
+{% if perfil_destino.provincia != '' %}
+<tr><td>{% trans "Provincia " %}</td><td>{{ perfil_destino.provincia }}</td></tr>
+{% endif %}
+{% if not perfil_destino.ocultar_direccion and perfil_destino.direccion != '' %}
+<tr><td>{% trans "Dirección " %}</td><td>{{ perfil_destino.direccion }}</td></tr>
+{% endif %}

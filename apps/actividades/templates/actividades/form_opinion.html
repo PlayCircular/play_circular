@@ -1,0 +1,136 @@
+{% load i18n localeurl_tags %}
+
+<form action="{% url 'actividad-valorar-ajax' %}" method="POST" id="form_valorar">
+{% csrf_token %}
+
+	<div class="small-4 columns olgado">
+			<label>{% if actividad.tipo == 'oferta' %}{% trans 'Me interesa para mi: ' %}{% else %}{% trans 'Puedo ayudar' %}{% endif %}</label>
+			<input name="me_gusta_para_mi" type="radio" id="si_me_interesa" value="1" {% if actividad.me_gusta_para_mi == 1 and actividad.ya_opinado == 1 %} checked="checked"{% endif %}>
+			<label for="si_me_interesa">Si</label>
+			<input name="me_gusta_para_mi" type="radio" id="no_me_interesa" value="0" {% if actividad.me_gusta_para_mi == 0 and actividad.ya_opinado == 1 %} checked="checked"{% endif %}>
+			<label for="no_me_interesa">No</label>
+			<label for="rating_para_mi">{% trans 'Valoración' %}:</label>
+			<select name="rating_para_mi" id="rating_para_mi">
+				{% if actividad.ya_opinado == 1 %} 
+					{% if actividad.ya_intercambiada == 1 %}
+						<option value="{{ actividad.rating_para_mi_despues }}" selected>{{ actividad.rating_para_mi_despues }}</option>
+					{% else %}
+						<option value="{{ actividad.rating_para_mi_antes }}" selected>{{ actividad.rating_para_mi_antes }}</option>
+					{% endif %}
+				{% else %}	
+				<option value="" selected>{% trans 'Valoración' %}</option>
+				{% endif %}
+				<option value="-1">-1</option>
+				<option value="0">0</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+			</select>
+	</div>
+	
+	<div class="small-4 columns olgado">
+		<label>{% trans 'Me interesa para la comunidad' %}</label>
+		<input name="bien_comun" type="radio" id="bien_comun_si" value="1" {% if actividad.bien_comun == 1 and actividad.ya_opinado == 1 %} checked="checked"{% endif %}>
+		<label for="bien_comun_si">Si</label>
+		<input name="bien_comun" type="radio" id="bien_comun_no" value="0" {% if actividad.bien_comun == 0 and actividad.ya_opinado == 1 %} checked="checked"{% endif %}>
+		<label for="bien_comun_no">No</label>
+		<label for="rating_para_bien_comun">{% trans 'Valoración' %}:</label> 
+		<select name="rating_para_bien_comun" id="rating_para_bien_comun">
+			{% if actividad.ya_opinado == 1 %} 
+			<option value="{{ actividad.rating_para_bien_comun }}" selected>{{ actividad.rating_para_bien_comun }}</option>
+			{% else %}	
+			<option value="" selected>{% trans 'Valoración' %}</option>
+			{% endif %}
+			<option value="-1">-1</option>
+			<option value="0">0</option>
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+		</select>
+	</div>
+
+
+	<div class="small-4 columns olgado"> 
+		<input type="hidden" name="objeto" value="{{ actividad.pk }}" id="id_objeto" />
+		<input type="hidden" name="pagina" value="{{ pagina }}" id="pagina" />
+		<input type="hidden" name="n_paginas" value="{{ n_paginas }}" id="n_paginas" />
+		<input type="hidden" name="retorno" value="{{ retorno }}" id="retorno" />
+		<label>{% trans 'Pulsa para dar tu opinión y acceder a la siguiente valoración' %}:</label> 
+		<input type="submit" value="{% trans 'Valorar' %}" id="siguiente" class="tiny success button" disabled="true"/>
+	</div>
+	
+	<div class="small-12 columns olgado">
+	<textarea name="comentario" id="comentario" class="small-11 columns" rows="4" maxlength="400" placeholder="{% trans 'Deja un comentario si quieres' %}">{% if actividad.comentario %}{{ actividad.comentario }}{% endif %}</textarea>	
+	</div>
+
+</form>
+
+<script type="text/javascript">
+
+// No se funciona el document.ready por ajax
+// $(document).ready(function(){
+
+		
+		function comprobar(){ 
+			var bandera = 0;
+			if (($("#si_me_interesa").is(':checked')) || ($("#no_me_interesa").is(':checked')) ) {
+				bandera += 1
+			}
+			if ( ($("#bien_comun_si").is(':checked')) || ($("#bien_comun_no").is(':checked')) ) {
+				bandera += 1
+			}
+			if ($("#rating_para_mi_antes").val() !='' ) {
+				bandera += 1
+			} 
+			if ($("#rating_para_bien_comun").val() !='' ) {
+				bandera += 1
+			}
+			if (bandera == 4) {
+				$('#siguiente').attr("disabled", false);
+			} else {
+				$('#siguiente').attr("disabled", true);
+			}
+			
+// 			alert(bandera)
+		}
+		
+		$("#si_me_interesa").click(function() {
+			comprobar()
+		});
+		$("#no_me_interesa").click(function() {
+			comprobar()
+		});
+		$("#bien_comun_si").click(function() {
+			comprobar()
+		});
+		$("#bien_comun_no").click(function() {
+			comprobar()
+		});
+		$("#rating_para_mi").change(function() {
+			comprobar()
+		});
+		$("#rating_para_bien_comun").change(function() {
+			comprobar()
+		});
+
+		$('#siguiente').click(function(event){
+			event.preventDefault(); 
+			$('#cargador_actividad').hide();
+			$('#cargando_actividad').removeClass("pelotica-invisible").addClass("pelotica-visible");
+			var url = $('#form_valorar').attr('action');  
+			var data = $('#form_valorar').serialize();  
+			// 		alert(data);
+			$.post(url, data, function(status) {  
+				$('#cargador_actividad').show();
+				$('#cargando_actividad').removeClass("pelotica-visible").addClass("pelotica-invisible");
+				$('#cargador_actividad').html(status); 
+			});  
+		});
+		
+// });
+
+</script>

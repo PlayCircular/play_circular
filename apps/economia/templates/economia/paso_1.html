@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+
+{% block title %} {{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+
+	<div class="small-12 columns">
+		{% include "economia/nuestras_cuentas.html" %}
+		
+		<header>
+			<h4>{{ situacion|upper }}</h4>
+		</header>
+	</div>
+
+	{% include "economia/datos_usuario.html" %}
+		
+	<div class="small-12 columns">
+		<div id="cargando_actividad" class="pelotica-invisible row">
+		<table class="small-12 columns" height="600"> 
+			<tr><td><div align="center"><img src="{{ STATIC_URL }}imagenes/interface/loader.gif"  alt="cargando..."/></div></td></tr>
+		</table>
+		</div>
+	</div>
+	<div id="cargador_actividad">
+		{% if actividad %}
+			{% include "actividades/listado_1.html" %}
+		{% endif %}
+	</div>
+	
+	<div class="small-12 columns olgado">
+		<div id="cargando_formulario" class="pelotica-invisible row">
+		<table class="small-12 columns" height="600"> 
+			<tr><td><div align="center"><img src="{{ STATIC_URL }}imagenes/interface/loader.gif"  alt="cargando..."/></div></td></tr>
+		</table>
+		</div>
+	</div>
+	<div id="cargador_formulario">
+			{% include "economia/formulario_pago.html" %}
+	</div>
+
+
+
+
+
+{% endblock %}
+

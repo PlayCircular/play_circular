@@ -1,0 +1,107 @@
+﻿{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+{% block favicon1 %}{% thumbnail config.logo "24x24" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% endblock %}
+{% block favicon2 %}{% thumbnail config.logo "24x24" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% endblock %}
+
+{% block extra_head %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+	<section class="small-12 small-centered columns">
+	
+	{% if request.datos.n_grupos >= 1 %}
+
+		<h3>{% trans "Mis grupos" %}</h3>
+		
+		{% include "grupos/info_grupos_b.html" %}
+		
+		<h3>{% trans "Mis cuentas" %}</h3>
+		
+		{% include "economia/mis_cuentas.html" %}
+		
+	{% else %}
+		<div data-alert class="alert-box info radius">
+			<p>{% trans "Aunque estás registrado en Play Circular <b>todavía no perteneces a ningún grupo</b>. Aquí tienes los grupos activos existentes." %}
+			<a href="#" class="close">&times;</a></p>
+			<p>{% trans "<b>Unete a uno o varios grupos</b> para poder publicar actividades, entradas, y hacer intercambios." %}</p>
+			
+		</div>
+		
+		<header class="small-12 columns">
+			<h4> {% trans "Grupos activos. " %}</h4>
+		</header>
+
+		<article class="small-12 columns">
+
+			{% include "grupos/info_grupos_a.html" %}
+
+		</article>
+	
+	
+	{% endif %}
+ 
+	</section>
+	
+
+	<section class="small-12 columns">
+	
+		<h4>{% trans "Últimas propuestas" %}</h4>
+		{% for item in ultimas_propuestas %}
+			<br><h5><a href="{{ item.get_absolute_url }}" title="{{ item }}">{{ item }}</a></h5>
+			<div>{{ item.intro }}</div>
+			<div><i class="right"><a href="{% url 'social-perfil' item.usuario %}">@{{ item.usuario }}</a> {% trans "Publicado en: " %}{{ item.grupos }} </i></div>
+			<div><i class="right">{% trans "Hace: " %}{{ item.creada|timesince }}</i></div>
+		{% empty %}
+			<div>{% trans "No hay registros" %}</div>
+		{% endfor %}
+		
+		<br><h4>{% trans "Últimas entradas" %}</h4>
+		{% for item in ultimas_entradas %}
+			<br><h5><a href="{{ item.get_absolute_url }}" title="{{ item }}">{{ item }}</a></h5>
+			<div>{{ item.intro }}</div>
+			<div><i class="right"><a href="{% url 'social-perfil' item.usuario %}">@{{ item.usuario }}</a> {% trans "Publicado en: " %}{{ item.grupos }} </i></div>
+			<div><i class="right">{% trans "Hace: " %}{{ item.creada|timesince }}</i></div>
+		{% empty %}
+			<div>{% trans "No hay registros" %}</div>
+		{% endfor %}
+
+		
+	</section>
+	
+	<section class="small-12 columns">
+		
+		<h4>{% trans "Últimas actividades" %}</h4>
+		{% for item in ultimas_actividades %}
+			<br><h5><a href="{{ item.get_absolute_url }}" title="{{ item }}">{{ item }}</a></h5>
+			<div>{{ item.intro|slice:":300" }} {% if item.intro|length > 300 %}...{% endif %}</div>
+			<div><i class="right"><a href="{% url 'social-perfil' item.usuario %}">@{{ item.usuario }}</a> {% trans "Publicado en: " %}{{ item.grupos }} </i></div>
+			<div><i class="right">{% trans "Hace: " %}{{ item.creado|timesince }}</i></div>
+		{% empty %}
+			<div>{% trans "No hay registros" %}</div>
+		{% endfor %}
+		
+	</section>
+	
+	<section class="small-12 columns">
+		
+		<h4>{% trans "Últimos intercambios públicos" %}</h4>
+		<ul>
+		{% for item in ultimos_intercambios_p %}
+			<li><a href="{% url 'social-perfil' item.origen %}">@{{ item.origen }}</a> > {{ item }} > <a href="{% url 'social-perfil' item.destino %}">@{{ item.destino }}</a> ({{ item.creado|timesince }})</li>
+		{% empty %}
+			<li>{% trans "No hay registros" %}</li>
+		{% endfor %}
+		</ul>
+		
+	</section>
+	
+
+</div> 
+
+{% endblock %}

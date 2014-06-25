@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n localeurl_tags %}
+
+
+{% block title %} {{ situacion|upper }} {% endblock %}
+
+{% block extra_head %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row" id="contendor-central">
+
+	<section id="listado">
+		{% if actividades %}
+				<div class="small-12 columns"> 
+					<h3>{% trans "Valorar actividades de tu comunidad" %}</h3>
+				</div>
+
+				<div id="cargando_actividad" class="pelotica-invisible">
+					<div class="row panel">
+					<table class="small-12 columns" height="200"> 
+						<tr><td><div align="center"><img src="{{ STATIC_URL }}imagenes/interface/loader.gif"  alt="cargando..."/></div></td></tr>
+					</table>
+					</div>
+				</div>
+				<div id="cargador_actividad">
+				{% include "actividades/listado_2.html" %}
+				</div>
+
+		{% else %}
+			<div class="small-12 columns"> 
+				<div class="panel"><h3>{% trans 'Ya has valorado todo en tu comunidad' %}</h3></div>
+			</div>
+		{% endif %}
+
+	</section>
+
+</div> <!--Fin contendor-central-->
+
+{% endblock %}
+
+

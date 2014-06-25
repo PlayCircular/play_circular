@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+{% block title %} {{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+
+<div class="row" id="contendor-central">
+
+<section>
+
+	<header class="small-12 columns">
+		<h4> {% trans "Grupos activos. " %}</h4>
+	</header>
+	
+	<article class="small-12 columns">
+
+		{% include "grupos/info_grupos_a.html" %}
+
+	</article>
+
+</section>
+
+</div> <!--Fin contendor-central-->
+
+
+{% endblock %}
+
+

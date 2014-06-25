@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load i18n localeurl_tags %}
+
+{% block metatitle%}{% trans "Estadisticas de intercambio "  %}{{ grupo }}{% endblock %}
+{% block metakeywords %}{{ idioma.palabras_clave }}{% endblock %}
+{% block metadescription %}{{ idioma.meta_descripcion }}{% endblock %}
+{% block metarobots %}{{ idioma.robots }}{% endblock %}"
+
+{% block title %}{{ situacion|upper }} {% endblock %}
+
+{% block extra_head %}
+
+{% endblock %}
+
+{% block content %}
+
+
+
+
+<section>
+		
+	<div class="row">
+		<header>
+			<h4> {% trans "Estadisticas de intercambio del grupo"  %}: {{ grupo }}</h4>
+		</header>
+		
+		<nav class='small-12 columns'>
+			{% include "grupos/submenu_estadisticas.html" %}
+		</nav>
+	
+	</div>
+	<div class="row">
+
+		<article>
+			<table class="small-3 columns">
+				<tr><td colspan="2"><h3> {% trans "Operaciones"  %}</h3></td></tr>
+				<tr><td>{% trans "Días desde la creación" %}</td><td>{{ n_dias }}</td></tr>
+				<tr><td>{% trans "Operaciones totales" %}</td><td>{{ n_total_operaciones }}</td></tr>
+				<tr><td>{% trans "Operaciones dentro del grupo" %}</td><td>{{ n_total_op_dentro_grupo }}</td></tr>
+				<tr><td>{% trans "Balance del grupo" %}</td><td>
+					{{ balance_del_grupo }}
+					{% if balance_del_grupo == 1 %}
+						{{ grupo.nombre_moneda_s }}
+						{% else %}	
+						{{ grupo.nombre_moneda_p }}
+					{% endif %}	
+				</td></tr>
+				<tr><td>{% trans "Operaciones por día" %}</td><td>{{ operaciones_x_dia }}</td></tr>
+				<tr><td>{% trans "Valor total de las operaciones positivas" %}</td><td>{{ valor_operaciones_positivas }}
+					{% if valor_operaciones_positivas == 1 %}
+					{{ grupo.unidad_s }}
+					{% else %}	
+					{{ grupo.unidad_p }}
+					{% endif %}	
+				</td></tr>
+				<tr><td>{% trans "Valor total de las operaciones negativas" %}</td><td>{{ valor_operaciones_negativas }}
+					{% if valor_operaciones_negativas == 1 %}
+					{{ grupo.unidad_s }}
+					{% else %}	
+					{{ grupo.unidad_p }}
+					{% endif %}	
+				</td></tr>
+				<tr><td>{% trans "Valor medio por operación" %}</td><td>{{ valor_medio_operacion }}
+				{% if valor_medio_operacion == 1 %}
+					{{ grupo.unidad_s }}
+					{% else %}	
+					{{ grupo.unidad_p }}
+				{% endif %}	
+				</td></tr>
+				<tr><td>{% trans "Número de miembros" %}</td><td>{{ n_miembros }}</td></tr>
+				<tr><td>{% trans "Miembros que han hecho operaciones" %}</td><td>{{ n_miembros_con_operaciones }}</td></tr>
+		</article>
+		
+		<div class="small-1 columns">&nbsp</div>
+		
+		<article>
+			<table class="small-3 columns">
+				<tr><td colspan="2"><h3> {% trans "Intergrupos"  %}</h3></td></tr>
+				<tr><td>{% trans "Operaciones totales" %}</td><td>{{ n_total_operaciones }}</td></tr>
+				<tr><td>{% trans "Operaciones dentro del grupo" %}</td><td>{{ n_total_op_dentro_grupo }}</td></tr>
+				<tr><td>{% trans "Importaciones de otros grupos" %}</td><td>{{ n_total_op_importadas }}</td></tr>
+				<tr><td>{% trans "Exportaciones a otros grupos" %}</td><td>{{ n_total_op_exportadas }}</td></tr>
+				<tr><td>{% trans "Valor de las importaciones" %}</td><td>{{ valor_op_importadas }} 
+					{% if valor_op_importadas == 1 %}
+					{{ grupo.nombre_moneda_s }}
+					{% else %}	
+					{{ grupo.nombre_moneda_p }}
+					{% endif %}	
+					</td>
+				</tr>
+				<tr><td>{% trans "Valor de las exportaciones" %}</td><td>{{ valor_op_exportadas }} 
+					{% if valor_op_exportadas == 1 %}
+					{{ grupo.nombre_moneda_s }}
+					{% else %}	
+					{{ grupo.nombre_moneda_p }}
+					{% endif %}	
+					</td>
+				</tr>
+			</table>
+		</article>
+		
+		<div class="small-1 columns">&nbsp</div>
+
+		<article>
+			<table class="small-3 columns">
+				<tr><td colspan="2"><h3> {% trans "Impuestos"  %}</h3></td></tr>
+				<tr><td>{% trans "Número total de operaciones de impuestos" %}</td><td>{{ n_total_op_impuestos }}</td></tr>
+				<tr><td>{% trans "Suma total de las operaciones de impuestos" %}</td><td>{{ valor_total_impuestos }}</td></tr>
+				<tr><td>{% trans "Número de impuestos internos" %}</td><td>{{ n_op_imp_internos }}</td></tr>
+				<tr><td>{% trans "Suma de impuestos internos" %}</td><td>{{ valor_imp_internos }}</td></tr>
+				<tr><td>{% trans "Número de impuestos externos" %}</td><td>{{ n_op_imp_externos }}</td></tr>
+				<tr><td>{% trans "Suma de impuestos externos" %}</td><td>{{ valor_imp_externos }}</td></tr>
+			</table>
+		</article>
+		
+		<div class="small-1 columns">&nbsp</div>
+		
+	</div>
+	
+	<div class="row">
+	
+		<article>
+			<table class="small-8 small-centered columns">
+				<tr><td colspan="2"><h3> {% trans "Operaciones por mes"  %}</h3></td></tr>
+				<tr><td>
+						<table>
+							<tr><td>{% trans "Mes" %}</td><td>{% trans "Operaciones por mes" %}</td></tr>
+							{% for item in qs_ope_x_mes %}
+								<tr><td>{{ item.0|date:"b Y" }}</td><td>{{ item.1 }}</td></tr>
+							{% endfor %}
+						</table>
+					</td>
+					<td>
+						<table>
+							<tr><td>{% trans "Mes" %}</td><td>{% trans "Valor operaciones por mes" %}</td></tr>
+							{% for item in qs_suma_x_mes %}
+								<tr><td>{{ item.0|date:"b Y" }}</td><td>{{ item.1 }}</td></tr>
+							{% endfor %}
+						</table>
+					</td>
+				</tr>
+			</table>
+		</article>
+	
+	</div>
+	
+	<div class="row">
+		<article class="small-8 small-centered columns"><canvas id="cuadro_2"></canvas></article>
+	</div>
+	<div class="row">
+		<article class="small-8 small-centered columns"><canvas id="cuadro_3"></canvas></article>
+	</div>	
+	<div class="row">
+		<article class="small-8 small-centered columns"><canvas id="cuadro_4"></canvas></article>
+	</div>
+	<div class="row">
+		<article class="small-8 small-centered columns"><canvas id="cuadro_5"></canvas></article>
+	</div>
+
+	<script class="code" type="text/javascript">
+
+
+		var chartdata46 = {
+
+		"config": {
+			"title": "Operaciones por mes",
+			"subTitle": "Desde el inicio del grupo",
+	// 		"minY": -1500,
+			"useVal": "yes",
+			"type": "line"
+		},
+
+		"data": [
+			["mes", 
+			{% for item in qs_ope_x_mes %}
+				'{{ item.0|date:"b" }}'{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			],
+			["operaciones",
+			{% for item in qs_ope_x_mes %}
+				{{ item.1 }}{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			]
+			]
+		};
+		ccchart.init("cuadro_2", chartdata46)
+		
+		var chartdata46 = {
+			
+		"config": {
+			"title": "Suma de operaciones en €",
+			"subTitle": "(Por meses registrados)",
+	// 		"minY": -1500,
+			"useVal": "yes",
+			"type": "line"
+		},
+
+		"data": [
+			["mes", 
+			{% for item in qs_suma_x_mes %}
+				'{{ item.0|date:"b" }}'{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			],
+			["suma",
+			{% for item in qs_suma_x_mes %}
+				{{ item.1|intcomma }}{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			]
+			]
+		};
+		ccchart.init("cuadro_3", chartdata46)
+		
+		var chartdata46 = {
+
+		"config": {
+			"title": "Operaciones por día",
+			"subTitle": "Desde el inicio del grupo",
+	// 		"minY": -1500,
+			"useVal": "yes",
+			"type": "line"
+		},
+
+		"data": [
+			["día", 
+			{% for item in qs_ope_x_dia %}
+				'{{ item.0|date:"d-b" }}'{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			],
+			["operaciones",
+			{% for item in qs_ope_x_dia %}
+				{{ item.1 }}{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			]
+			]
+		};
+		ccchart.init("cuadro_4", chartdata46)
+		
+		var chartdata46 = {
+			
+		"config": {
+			"title": "Suma de operaciones en €",
+			"subTitle": "(Por días registrados)",
+	// 		"minY": -1500,
+			"useVal": "yes",
+			"type": "line"
+		},
+
+		"data": [
+			["día", 
+			{% for item in qs_suma_x_dia %}
+				'{{ item.0|date:"d-b" }}'{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			],
+			["suma",
+			{% for item in qs_suma_x_dia %}
+				{{ item.1|intcomma }}{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			]
+			]
+		};
+		ccchart.init("cuadro_5", chartdata46)
+		
+	</script>
+  
+
+</section>
+
+</div> 
+
+
+{% endblock %}
+
+

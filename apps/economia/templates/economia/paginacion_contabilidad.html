@@ -1,0 +1,12 @@
+{% load i18n localeurl_tags %}
+
+{% if intercambio_qs %}
+	{% for item in n_paginas.object_list %}
+		{% include "economia/intercambio.html" %}
+	{% endfor %}	
+{% else %}
+	<tr><td colspan="9">{% trans "No hay registros" %}</td></tr>
+{% endif %}
+
+
+

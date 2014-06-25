@@ -1,0 +1,85 @@
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+<table class="small-12 columns">
+	<tr><td colspan="2"><h4>{% trans "Datos de la actividad" %}</h4></td><tr>
+	<tr><td>{% trans "Actividad" %}</td><td><h4>{{ actividad.actividad }}</h4></td></tr>
+	<tr><td width="200px">{% trans "Fotos de la actividad:" %}</td>
+		<td>
+		<ul class="clearing-thumbs" data-clearing>
+		{% for i in actividad.fotos_actividad.all %}
+			<li><a class="th" href="{{ MEDIA_URL }}{{ i.foto }}">
+				{% thumbnail i.foto "80x80" as im %}
+				<img src="{{ im.url }}" alt="{{ i.url }}" width="{{ im.width }}" height="{{ im.height }}"/>{% if not forloop.last %}&nbsp;{% endif %}
+				{% endthumbnail %}
+				</a>
+			</li>
+		{% endfor %}
+		</ul>
+		</td>
+	</tr>
+	<tr><td width="200px">{% trans "Publicada por:" %}</td>
+		<td>
+		<ul class="clearing-thumbs" data-clearing>
+			{% for foto in actividad.get_fotos_usu %}
+				<li><a class="th" href="{{ MEDIA_URL }}{{ foto.foto }}">
+				{% thumbnail foto.foto "30x30" as im %}
+				<img src="{{ im.url }}" alt="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"/>{% if not forloop.last %}&nbsp;{% endif %}
+				{% endthumbnail %}
+				</a></li>
+			{% endfor %}
+		</ul>
+		<a href="{% url 'social-perfil' actividad.usuario %}">@{{ actividad.usuario }}</a>
+		</td>
+	</tr>
+	<tr><td>{% trans "Clase" %}</td><td>{{ actividad.clase }}</td></tr>
+	<tr><td>{% trans "Tipo" %}</td><td>{{ actividad.tipo }}</td></tr>
+	{% if actividad.fecha_caducidad != None %}
+	<tr><td>{% trans "Fecha de caducidad " %}</td><td>{{ actividad.fecha_caducidad }}</td></tr>
+	{% endif %}
+	<tr><td><strong>{% trans "Grupos en que está publicada la actividad" %}</strong></td>
+		<td>
+		<span class="round regular label">
+		<h5>
+		{% for grupo in actividad.grupo.all %}
+				{{ grupo }}{% if not forloop.last %},{% endif %}
+			{% endfor %}               
+		</h5>
+		</span>
+		</td>
+	</tr>
+	<tr><td>{% trans "Categoría" %}</td>
+		<td>{% if actividad.categoria %}<a href="{% url 'actividad-categoria' actividad.categoria.pk %}">
+			{{ actividad.categoria }}</a>{% endif %}
+		</td>
+	</tr>
+	<tr><td>{% trans "Idiomas disponibles" %}</td>
+		<td>
+			{% for item in actividad.idiomas_disponibles %}
+				<a href="{{ item.get_absolute_url|chlocale:item.idioma }}">{{ item.idioma }}</a>{% if not forloop.last %} | {% endif %}
+			{% endfor %}
+		</td>
+	</tr>
+	<tr><td>{% trans "Etiquetas" %}</td>
+		<td>
+		{% for tag in actividad.tags %}
+				<a href="{% url 'actividad-tag' tag %}" alt="{{ tag }}" title="{{ tag }}">{{ tag }}</a> {% if not forloop.last %}, {% endif %}
+			{% endfor %}           
+		</td>
+	</tr>
+	<tr><td>{% trans "Descripcion" %}</td><td>{{ actividad.descripcion|removetags:"iframe script"|safe }}</td></tr>
+	<tr><td>{% trans "Moneda social" %}</td><td> 
+		<span class="round regular label"><h5>
+		{% for grupo in actividad.grupo.all %}
+			{{ actividad.precio_moneda_social }} {{ grupo.unidad_p }}{% if not forloop.last %} ó {% endif %}
+		{% endfor %} 
+		</h5></span>
+	</td></tr>
+	<tr><td>{% trans 'Creado hace: ' %}</td><td>{{ actividad.creado|timesince }}</td></tr>
+	<tr><td>{% trans 'Fecha de caducidad: ' %}</td><td>{% if actividad.fecha_caducidad %}{{ actividad.fecha_caducidad|date:"d/m/Y" }}{% else %}{% trans 'No tiene' %}{% endif %}</td></tr>
+	<tr><td>{% trans 'Nº visitas: ' %}</td><td>{{ actividad.n_visitas }}</td></tr>
+	<tr><td>{% trans 'Nº opiniones: ' %}</td><td>{{ actividad.n_votaciones }}</td></tr>
+	<tr><td>{% trans 'Gusta a : ' %}</td><td>{{ actividad.n_interes_particular }}{% trans " personas. Rating medio: " %}{{ actividad.media_rating_para_mi_antes }}</td></tr>
+	<tr><td>{% trans 'Personas a las que le gusta para la comunidad' %}</td><td>{{ actividad.n_interes_comunidad }}{% trans " Rating medio: " %}{{ actividad.media_rating_para_bien_comun }}</td></tr>
+	 
+</table>

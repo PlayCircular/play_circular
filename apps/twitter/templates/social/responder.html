@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %} Responder mensaje {% endblock %}
+
+{% block content %}
+
+<div id="contenidos" class="contenedor_contenido">
+
+	<p>Responder a este mensaje</p>
+
+	<p>{{ mensaje.usuario.get_full_name }} (<a href="{% url 'social-perfil' mensaje.usuario %}">@{{ mensaje.usuario }}</a>)</p>
+
+	<p>{{ mensaje.filtrar|safe|linebreaksbr }}</p>
+
+	<p><strong>Publicado: {{ mensaje.creado }}</strong></p>
+
+	<form action="{% url 'social-escribir' %}" method="POST">
+		{% csrf_token %}
+		<input type="hidden" name="usu" value="{{ request.user.pk }}" id="id_usu" />
+		<input type="hidden" name="respuesta" value="{{ mensaje.pk }}" id="id_respuesta" />
+		<textarea  name="contenido"  id="id_contenido" rows="10" cols="40">@{{ mensaje.usuario }}</textarea>
+		<button type="submit">Responder</button>
+		<a class="btn btn-danger" href="{% url 'portada' %}">No responder</a>
+	</form>
+
+</div>
+
+{% endblock %}

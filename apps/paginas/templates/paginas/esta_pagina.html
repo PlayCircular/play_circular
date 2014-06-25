@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags portada_filtros %}
+
+{% block metatitle%}{{ idioma.titulo }}{% endblock %}
+{% block metakeywords %}{{ idioma.palabras_clave }}{% endblock %}
+{% block metadescription %}{{ idioma.meta_descripcion }}{% endblock %}
+{% block metarobots %}{{ idioma.robots }}{% endblock %}"
+
+{% block title %} {{ idioma.titulo }} {% endblock %}
+
+{% block extra_head %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/foundation/foundation.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/foundation/foundation.clearing.js"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+	<header class="small-12 columns">
+		<h3>{{ idioma.titulo }}</h3>
+	</header>
+
+	<section class="small-10 columns">
+		{% autoescape off %}
+			{{ idioma.cuerpo }}
+		{% endautoescape %}
+	</section>
+	
+	<aside class="small-2 columns">
+	
+		<div>
+		<h5>{% trans "Publicado en:" %}</h5>
+		{% for grupo in pagina.grupo.all %}
+			{{ grupo }}{% if not forloop.last %},{% endif %}
+		{% endfor %}
+		</div>
+		</br>
+		
+		<div>
+		<h5>{% trans "Visitas:" %} {{ pagina.n_visitas }}</h5>
+		</div>
+		</br>
+		
+		<div>
+		<h5>{% trans "Fecha:" %}</h5>
+		{{ pagina.creada|date:"d/m/Y" }}
+		</div>
+		</br>
+		
+		<div>
+		<h5>{% trans "Idiomas:" %}</h5>
+			{% for item in pagina.idiomas_disponibles %}
+				<a href="{{ item.get_absolute_url|chlocale:item.idioma }}">{{ item.idioma }}</a>{% if not forloop.last %} | {% endif %}
+			{% endfor %}
+		</div>
+		</br>
+	
+	</aside>
+	
+</div>
+
+
+<div class="row">
+	{% if fotos_p %}
+		
+		<section class="small-9 columns">
+			<ul class="clearing-thumbs" data-clearing>
+			{% for foto in fotos_p %}
+				<li><a class="th" href="{{ MEDIA_URL }}{{ foto }}">
+				{% thumbnail foto "60x60" as im %}
+					<img src="{{ im.url }}"  alt="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"/>
+				{% endthumbnail %}
+				</a></li>
+			{% endfor %}
+			</ul>
+		</section>
+	{% endif %}
+	
+</div>
+
+<div class="row">
+
+	<a href="https://twitter.com/share" class="twitter-share-button" data-via="PlayCircular">Tweet</a>
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+	
+	<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-type="button"></div>
+	
+	<div class="g-plus" data-action="share" data-annotation="none"></div>
+	
+</div>
+
+{% if pagina.comentarios %}
+
+	<div class="row">
+		<div class="small-9 columns">
+			<b>{% trans "Comentarios:" %}</b>
+			{% for item in comentarios %}
+			<div>
+				{% if item.perfil.una_foto.foto  %}
+				<ul class="clearing-thumbs" data-clearing>
+				<li>
+					{% thumbnail item.perfil.una_foto.foto "24x24" as im %}
+					<a class="th" href="{{ MEDIA_URL }}{{ item.perfil.una_foto.foto }}"><img src="{{ im.url }}"  alt="{{ im.name }}" width="{{ im.width }}" height="{{ im.height }}"/></a>
+					{% endthumbnail %}
+					| <a href="{% url 'social-perfil' item.perfil %}">@{{ item.perfil }}</a>
+					</li>
+					</ul>
+				{% endif%}
+				
+			</div>
+			<div>
+				{{ item }}
+			</div>
+			<div>
+				<i class="right">{% trans "Hace: " %}{{ item.creado|timesince }}</i>
+			</div>
+			{% empty %}
+			<div class="row"><div class="small-12 columns">{% trans "No hay comentarios." %}</div></div>
+			{% endfor %}	
+		</div>
+	</div>
+
+{% endif %}
+
+{% if user.is_authenticated and pagina.comentarios %}
+
+	<div class="row">
+		<section class="small-9 columns">
+			<form action="{% url 'ver-pagina' pagina.pk pagina.pk|get_titulo_idioma:LANGUAGE_CODE|slugify %}" method="POST">
+				<table>
+					{% csrf_token %}
+					{{ form.as_table }}
+					<tr><td colspan="2"><input type="submit" value="Comentar" class="small success button"/></td></tr>
+				</table>
+			</form>
+		</section>
+	</div>
+
+{% endif %}
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v2.0";
+		fjs.parentNode.insertBefore(js, fjs);
+	}
+	(document, 'script', 'facebook-jssdk'));
+</script>
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'es'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/platform.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+
+
+{% endblock %}

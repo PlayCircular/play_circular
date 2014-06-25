@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n localeurl_tags %}
+
+{% block title %} {% trans "Página no encontrada" %}{% endblock %}
+
+{% block extra_head %}
+
+{% endblock %}
+
+	<link rel='stylesheet' href='{{ STATIC_URL }}css/normalize.css'>
+	<link rel='stylesheet' href='{{ STATIC_URL }}css/foundation.css'>
+	<link rel='stylesheet' href='{{ STATIC_URL }}css/estilo.css'>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/ccchart.js" charset="utf-8"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/vendor/modernizr.js"></script>
+
+{% block content %}
+
+<section class="row">
+
+	<header class="small-12 columns">
+		<h2>{% trans "Lo sentimos, la página solicitada no existe" %}</h2>
+	</header>
+
+</section>
+
+
+{% endblock %}

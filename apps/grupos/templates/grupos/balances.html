@@ -1,0 +1,15 @@
+{% load i18n localeurl_tags %}
+
+	<tr>
+		<td>{{ item.miembro.usuario }}</td>
+		<td>{{ item.miembro.clave }}</td>
+		<td>{{ cuenta }}</td>
+		<td>{{ cuenta.titular }}</td>
+		<td>{{ cuenta.grupo }}</td>
+		<td>{{ cuenta.tipo }}</td>
+		<td>{{ cuenta.margen }}</td>
+		<td>{{ cuenta.operaciones }}</td>
+		<td>{{ cuenta.saldo }}</td>
+		<td>{{ item.miembro.creado|date:"d/m/y" }}</td>
+		<td>{{ item.miembro.usuario.last_login|date:"d/m/y" }}</td>
+	</tr>

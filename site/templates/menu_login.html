@@ -1,0 +1,39 @@
+{% load i18n localeurl_tags %}
+
+		<li {% if not situacion %} class="active"{% endif %}><a href="{% url 'portada' %}">{% trans "Portada" %}</a></li>
+		<li><label>{% trans "Hola," %}@{{ user }}</label></li>
+		<li {% if situacion ==  "mensajes" %} class="active"{% endif %}><a href="{% url 'usuarios-mensajes' %}">{% trans "Mensajes" %} ({{ request.datos.n_mensajes }})</a></li>
+		<li><a href="{{ SITE_ROOT }}/{{ LANGUAGE_CODE }}/admin" target="_blank">{% trans "Administación" %}</a></li>
+		<li><a href="{% url 'account_logout' %}">{% trans "Salir" %}</a></li>
+		
+		<li><label>{% trans "Mis grupos" %}</label></li>
+		{% if request.datos.n_grupos > 0 %}
+		{% for grupo in request.datos.mis_grupos %}
+			<li {% if situacion ==  grupo %} class="active"{% endif %}>
+					<a href="{% url 'portada-grupo' grupo.simbolo grupo.nombre|slugify %}">{{ grupo }}</a>
+			</li>
+		{% endfor %}
+		{% else %}
+		<li><a href="#">{% trans "Sin grupos" %}</a></li>
+		{% endif %}
+		<li {% if situacion ==  "entradas" %} class="active"{% endif %}><a href="{% url 'paginas-entradas' 'entradas' %}">{% trans "Entradas" %}</a></li>
+		<li {% if situacion ==  "propuestas" %} class="active"{% endif %}><a href="{% url 'paginas-entradas' 'propuestas' %}">{% trans "Propuestas" %}</a></li>
+		<li {% if situacion ==  "usuarios" %} class="active"{% endif %}><a href="{% url 'usuarios-index' %}">{% trans "Buscar usuarios" %}</a></li>
+		<li {% if situacion ==  "ces" %} class="active"{% endif %}><a href="{% url 'ces-importar-1' %}">{% trans "Importar del CES" %}</a></li>
+		
+		<li><label>{% trans "Actividades" %}</label></li>
+		
+		<li {% if situacion ==  "Todas" %} class="active"{% endif %}><a href="{% url 'actividades' %}">{% trans "Todas" %}</a></li>
+		<li {% if situacion ==  "bienes" %} class="active"{% endif %}><a href="{% url 'actividad-clase' 'bienes' %}">{% trans "Bienes" %}</a></li>
+		<li {% if situacion ==  "servicios" %} class="active"{% endif %}><a href="{% url 'actividad-clase' 'servicios' %}">{% trans "Servicios" %}</a></li>
+		<li {% if situacion ==  "Mis favoritos" %} class="active"{% endif %}><a href="{% url 'actividad-mis-favoritos' %}">{% trans "Favoritos" %}</a></li>
+		<li {% if situacion ==  "Valorar actividades" %} class="active"{% endif %}><a href="{% url 'actividad-valorar' 1 'no' %}">{% trans "Valorar" %}</a></li>
+		
+		<li><label>{% trans "Economía" %}</label></li>
+		
+		<li {% if situacion ==  "contabilidad" %} class="active"{% endif %}><a href="{% url 'economia-index' 0 %}">{% trans "Contabilidad" %}</a></li> 
+		<li {% if situacion ==  "intercambios públicos" %} class="active"{% endif %}><a href="{% url 'economia-i-p-todos' %}">{% trans "Intercambios públicos" %}</a></li>
+		
+		<li><label>{% trans "General" %}</label></li>
+		<li {% if not situacion %} class="active"{% endif %}><a href="{% url 'portada-general' 'general' %}">Play Circular</a></li>
+		<li {% if situacion ==  "grupos" or situacion == "estadisticas" or situacion == "crecimiento de usuarios" or situacion == "balance de usuarios" or situacion == "estadísticas de actividades" or situacion == "estadísticas de intercambio" %} class="active"{% endif %}><a href="{% url 'grupos-index' %}">{% trans "Todos los grupos" %}</a></li>	

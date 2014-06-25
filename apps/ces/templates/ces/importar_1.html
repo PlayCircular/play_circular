@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+{% block metatitle%}{{ situacion }}{% endblock %}
+{% block metakeywords %}{% trans 'CES, importar datos' %}{% endblock %}
+{% block metadescription %}{% trans 'Utilidad parar importar datos del CES' %}{% endblock %}
+{% block metarobots %}{% trans 'Comentarios' %}{% endblock %}"
+
+{% block title %}{{ situacion }}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+	<div class="small-12 columns">
+		<h4>{{ situacion }}</h4>
+	</div>
+	
+	<div class="small-12 columns">
+	<p>{% trans 'Utilidad parar importar datos del CES' %}</p>
+	</div>
+	
+	<div class="small-12 columns">
+	<p>{% trans 'Módulo en desarrollo...' %}</p>
+	</div>
+	
+	<div class="small-12 columns">
+	<p>{% trans 'Perdonen las molestias.' %}</p>
+	</div>
+       
+</div>
+
+{% endblock %}

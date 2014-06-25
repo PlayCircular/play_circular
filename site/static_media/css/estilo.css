@@ -1,0 +1,137 @@
+@font-face {
+	font-family: 'Fira Sans Light';
+	src: url('FiraSans-Light.woff');
+}
+
+
+/* Aniadidos a foundation */
+body {
+	font-family: Fira Sans Light;
+/* 	font-size: 1rem; */
+	margin-top: 2rem;
+	margin-bottom: 5rem;
+	
+}
+/*.row {
+ 	min-width:98% !important; 
+}*/
+table{
+	background: #EDF1F8;
+}
+
+.custom-sidenav {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 2rem;
+  background: #444444;
+}
+ul.custom-sidenav li label {
+    padding: 0.5rem 0.9375rem;
+	color: #303030;
+    text-transform: uppercase;
+    font-weight: bold;
+	font-size: 0.7rem; 
+	background: #7D7D7D;
+    border-top: 1px solid #5e5e5e;
+    border-bottom: none;
+    margin: 0; }
+ul.custom-sidenav li a {
+	display: block;
+	padding: 0.66667rem;
+	color: rgba(255, 255, 255, 0.7);
+	border-bottom: 1px solid #262626;
+	transition: background 300ms ease; }
+ul.custom-sidenav li.active {
+	background: #ec9111;
+}
+ul.custom-sidenav li a:hover {
+	background: #242424;
+}
+
+.salir {
+	display: inline-block;
+	border-bottom: none;
+}
+
+/* Fin de los aniadidos */
+
+/*
+.contenedor{
+	display: block;
+	background-color: #FBFBD9;
+	width: 96%;
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: 15px;
+	margin-bottom: 25px;
+	padding-top: 15px;
+	padding-bottom: 25px;
+	position: relative;
+	overflow: hidden;
+	border: 1px solid #666666;
+	border-radius: 12px;
+	box-shadow: 5px 5px 5px #46364D;
+	
+}*/
+
+.logo_movil {
+	height:280px;
+	text-align:center;
+}
+
+.centrado {
+	text-align:center;
+}
+
+.img_centrada {
+	display: block;
+	margin-left: auto;
+	margin-right: auto 
+}
+
+.listado {
+	border: 1px solid #DCDCDC;
+	border-radius: 4px;
+	margin-top: 4px;
+	margin-bottom: 4px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.olgado {
+	margin-top: 6px;
+	margin-bottom: 4px;
+}
+
+.pie {
+	border: 1px solid #DCDCDC;
+	border-radius: 4px;
+	margin-top: 30px;
+	margin-bottom: 44px;
+	padding-top: 10px;
+	padding-bottom: 1px;
+}
+
+.visible {
+	display: block;
+}
+.invisible {
+	display: none;
+}
+
+
+#pelotica {
+	float: right;
+}
+
+div.pelotica-invisible {
+	display: none;
+}
+
+div.pelotica-visible {
+	background: url(/static/imagenes/interface/comprobando.gif) no-repeat;
+	width: 20px;
+	height: 20px;
+	margin-right: 600px;
+}

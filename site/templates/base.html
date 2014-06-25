@@ -1,0 +1,286 @@
+﻿{% load i18n localeurl_tags %}
+{% load thumbnail mptt_tags %}
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<meta name="title" content="{% block metatitle%}{{ config.nombre }}{% endblock %}"/>
+<meta name="keywords" content="{% block metakeywords %}{{ config.palabras_clave }}{% endblock %}"/>
+<meta name="description" content="{% block metadescription %}{{ config.meta_descripcion }}{% endblock %}"/>
+<meta name="robots" content="{% block metarobots %}{{ config.metarobots }}{% endblock %}"/>
+<meta http-equiv="Content-Language" content="{% block idioma %}{{ LANGUAGE_CODE }}{% endblock %}"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<link rel="icon" href="{% block favicon1 %}{{ config.favicon.url }}{% endblock %}" type="image/png" />
+<link rel="shortcut icon" href="{% block favicon2 %}{{ config.favicon.url }}{% endblock %}">
+
+	<title>{% block title %}{{ config.nombre }}{% endblock %}</title>
+	
+	
+	<link rel='stylesheet' href='{{ STATIC_URL }}css/normalize.css'>
+	<link rel='stylesheet' href='{{ STATIC_URL }}css/foundation.css'>
+	<link rel='stylesheet' href='{{ STATIC_URL }}css/estilo.css'>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/ccchart.js" charset="utf-8"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/vendor/modernizr.js"></script>
+
+	{% block extra_head %}
+
+	
+	{% endblock %}
+</head>
+
+<body>
+
+	<strong class="show-for-medium-up">
+
+		<header class='row'>
+		
+			<div class='medium-3 columns'>
+			
+				{% block logo %}
+				
+					{% if request.datos.mis_grupos|length > 1 %}
+					
+						<ul class="example-orbit-content centrado" data-orbit
+																	data-options="slide_number: false;
+																	navigation_arrows:true;
+																	bullets:false;">
+						{% for logo in request.datos.mis_grupos %}
+						
+							<li data-orbit-slide="logo-{{ forloop.counter0 }}">
+								<div>
+								<img class="img_centrada" src='{% thumbnail logo.logo "180x180" crop="center" as im %}{{ im.url }}{% endthumbnail %}'>
+								<h4>{{ logo.nombre }}</h4>
+								<h6><i>{{ logo.eslogan }}</i></h6>
+								</div>
+							</li>
+						
+						{% endfor %}
+						</ul>
+					
+					{% else %}
+					
+						<div class="centrado">
+							<img class="img_centrada" src='{% thumbnail request.datos.mis_grupos.0.logo "180x180" crop="center" as im %}{{ im.url }}{% endthumbnail %}'>
+							<h4>{{ request.datos.mis_grupos.0.nombre }}</h4>
+							<h6><i>{{ request.datos.mis_grupos.0.eslogan }}</i></h6>
+						</div>
+					
+					{% endif %}
+
+				{% endblock %}
+				
+
+				<a href="#" data-dropdown="drop2" class="tiny button dropdown">{{ LANGUAGE_CODE }}</a>
+				<ul id="drop2" data-dropdown-content class="f-dropdown">
+					{% for lang in LANGUAGES %}
+						{% ifnotequal lang.0 LANGUAGE_CODE %}
+						<li><a href="{{ request.path|chlocale:lang.0 }}">{{ lang.0 }}</a></li>
+						{% endifnotequal %}
+					{% endfor %}
+				</ul>
+			</div>
+
+			<div class="medium-9 columns">
+			
+			{% block banners %}
+			
+				<ul class="example-orbit" data-orbit
+											data-options="animation:slide;
+											timer_speed:{% if config.tiempo_diapositivas > 0 %}{{ config.tiempo_diapositivas }}{% else %}5000{% endif %};
+											navigation_arrows:true;
+											bullets:false;">
+					{% for banner in request.datos.banners %}
+					<li>
+						{% thumbnail banner.banner "970x300" as im %}
+							{% if banner.url != '' %}
+							<a href="{{ banner.url }}">
+							<img src="{{ im.url }}"  alt="{{ banner.titulo }}" width="{{ im.width }}" height="{{ im.height }}"/></a>
+							{% else %}
+							<img src="{{ im.url }}"  alt="{{ banner.titulo }}" width="{{ im.width }}" height="{{ im.height }}"/>
+							{% endif %}
+						{% endthumbnail %}
+						<div class="orbit-caption">
+							{{ banner.titulo }}
+						</div>
+					</li>
+					{% endfor %}
+				</ul>
+				
+			{% endblock %}
+			</div>
+
+		</header>
+
+		</br>
+	</strong>
+
+	<div class="row">
+	
+		<!-- Página grande -->
+		
+		<strong class="show-for-medium-up">
+			<nav class="medium-3 columns">
+				<ul class="custom-sidenav">
+				{% block menu_grande %}
+					{% if user.is_authenticated %}
+						{% include "menu_login.html" %}
+					{% else %}
+						{% include "menu_logout.html" %}
+					{% endif %}
+				{% endblock %}
+				</ul>
+			</nav>
+			
+			<div class="medium-9 columns">	
+				<ul class="breadcrumbs">
+					<li><a href="{% url 'portada' %}">HOME</a></li>
+					{% block situacion %}
+						{% if situacion %}
+							<li class="current"><a href="{% url 'portada' %}">{{ situacion|upper }}</a></li>
+						{% endif %}
+					{% endblock %}
+				</ul>
+			</div>
+			</br>
+		</strong>
+		
+		<!-- Página pequeña -->
+		
+		<strong class="show-for-small-only">
+			
+			
+			<div class="off-canvas-wrap" data-offcanvas>
+			<div class="inner-wrap">
+				<nav class="tab-bar">
+				<section class="left-small">
+					<a class="left-off-canvas-toggle menu-icon" href="#"><span></span></a>
+				</section>
+
+				<section class="middle tab-bar-section">
+					<h3 class="title">{% trans "Menú" %}</h3>
+				</section>
+				
+
+				</nav>
+
+				<aside class="left-off-canvas-menu">
+				<ul class="off-canvas-list">
+				{% block menu_chico %}
+					{% if user.is_authenticated %}
+						{% include "menu_login.html" %}
+					{% else %}
+						{% include "menu_logout.html" %}
+					{% endif %}
+				{% endblock %}
+				</ul>
+				</aside>
+
+				<section class="main-section">
+					<!-- content goes here -->
+					
+					{% block minilogo %}
+									
+						{% if request.datos.mis_grupos|length > 1 %}
+						
+							<ul class="example-orbit-content centrado" data-orbit
+																		data-options="slide_number: false;
+																		navigation_arrows:true;
+																		bullets:false;">
+							{% for logo in mis_grupos %}
+							
+								<li data-orbit-slide="logo-{{ forloop.counter0 }}">
+									<div>
+									<img class="img_centrada" src='{% thumbnail logo.logo "120x120" crop="center" as im %}{{ im.url }}{% endthumbnail %}'>
+									<h4>{{ logo.nombre }}</h4>
+									<h6><i>{{ logo.eslogan }}</i></h6>
+									</div>
+								</li>
+							
+							{% endfor %}
+							</ul>
+						
+						{% else %}
+						
+							<div class="centrado">
+								<img class="img_centrada" src='{% thumbnail mis_grupos.0.logo "120x120" crop="center" as im %}{{ im.url }}{% endthumbnail %}'>
+								<h4>{{ request.datos.mis_grupos.0.nombre }}</h4>
+								<h6><i>{{ request.datos.mis_grupos.0.eslogan }}</i></h6>
+							</div>
+						
+						{% endif %}
+					
+					{% endblock %}
+
+					
+					<ul class="breadcrumbs">
+						<li><a href="{% url 'portada' %}">HOME</a></li>
+						{% if situacion %}
+						<li class="current"><a href="{% url 'portada' %}">{{ situacion|upper }}</a></li>
+						{% endif %}
+					</ul>
+					</br>
+				</section>
+
+				<a class="exit-off-canvas"></a>
+
+			</div>
+			</div> <!--  fin de la página pequeña -->
+			</strong>
+
+		<div class="medium-9 columns">
+			{% block content %}
+			cuerpo
+			{% endblock %}
+		</div>
+			
+	</div>
+
+	<footer class='row pie'>
+		{% block pie %}
+			<div class="small-12-centered columns">
+
+				<ul class="example-orbit-content centrado" data-orbit
+															data-options="slide_number: false;
+															navigation_arrows:true;
+															bullets:false;">
+				{% for item in request.datos.mis_grupos %}
+					<li data-orbit-slide="logo-{{ forloop.counter0 }}">
+						{% autoescape off %}
+							{{ item.pie_pagina }}
+						{% endautoescape %}
+					</li>
+				{% endfor %}
+				</ul>
+				
+			</div>
+		{% endblock %}
+	</footer>
+
+
+<script type="text/javascript" src="{{ STATIC_URL }}js/vendor/jquery.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/vendor/fastclick.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/foundation.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/foundation/foundation.interchange.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/foundation/foundation.offcanvas.js"></script>
+
+
+<script>
+$(document).foundation();
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-51156961-1', 'playcircular.com');
+  ga('require', 'displayfeatures');
+  ga('send', 'pageview');
+
+</script>
+
+</body>
+</html>

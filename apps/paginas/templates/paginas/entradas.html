@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+
+{% block title %} {{ situacion }} {% endblock %}
+
+{% block extra_head %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+	{% if rss == 'general' %}
+		<a href="{% url 'rss-entradas-general' %}">
+			<img src="{{ STATIC_URL }}imagenes/interface/ico_rss.gif" alt="Suscribirse a las {{ situacion }}"/> 
+			Suscribirse a las {{ situacion }} de Play Circular
+		</a>
+	{% endif %}
+	{% if rss == 'grupo' %}
+		<a href="{% url 'rss-entradas-grupo' grupo %}">
+			<img src="{{ STATIC_URL }}imagenes/interface/ico_rss.gif" alt="Suscribirse a las {{ situacion }}"/> 
+			Suscribirse a las {{ situacion }}
+		</a>
+	{% endif %}
+</div>
+
+<section class="row" id="listado">
+
+		{% for item in entradas %}
+			{% include "paginas/entrada.html" %}
+		{% empty %}
+			<div  class="small-12 columns"><h5>{% trans "No hay registros" %}</h5></div>
+		{% endfor %}
+		<div id="cargando-paginas" class="pelotica-invisible"></div>
+		
+</section>
+	
+<script type="text/javascript">
+	{% if n_paginas.object_list and n_paginas.paginator.num_pages > 1 %}
+		var page = {{ n_paginas.number }}; 
+		var n_paginas = {{ n_paginas.paginator.num_pages }};
+	{% else %}
+		var page = 1;
+		var n_paginas = 1;
+	{% endif %}
+	
+	var loadOnScroll = function() {
+		if ($(window).scrollTop() > $(document).height() - ($(window).height()*1.2)) {
+		$(window).unbind();
+		cargar_paginas();
+		}
+	};
+
+	var cargar_paginas = function() {
+		page = page + 1;
+		if (page > n_paginas) {
+			return false
+		} else {
+			$('#cargando-paginas').removeClass("pelotica-invisible").addClass("pelotica-visible");
+			$.ajax({
+				url: "{{ url }}?page=" + page,
+				
+				success: function(html)	{
+					if(html){
+						$("#listado").append(html);
+						$('#cargando-paginas').removeClass("pelotica-visible").addClass("pelotica-invisible");
+					}else{
+						$('#cargando-paginas').html('<center>{% trans "No hay más registros" %}</center>');
+					}
+				},
+				complete: function(data, textStatus){
+					$(window).bind('scroll', loadOnScroll);
+				}
+			});
+		}
+	};
+				
+				
+$(window).bind('scroll', loadOnScroll);
+						
+</script>
+
+{% endblock %}
+
+
+

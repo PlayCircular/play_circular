@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %} Reescibir {% endblock %}
+
+{% block content %}
+
+<div id="contenidos" class="contenedor_contenido">
+
+	<p>
+		Confirme que desea reescribir: {{ mensaje.filtrar|safe|linebreaksbr }}<br>
+		<form action="{% url 'social-reescribir' mensaje.id %}" method="post">
+			{% csrf_token %}
+			<input class="btn btn-success" type="submit" value="Reescribir" name="confirma">
+			<a class="btn btn-danger" href="{% url 'portada' %}">No reescribir</a>
+		</form>
+	</p>
+	
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% load i18n localeurl_tags %}
+
+{% if actividades %}
+	{% for actividad in n_paginas.object_list %}
+		{% if user.is_authenticated %}
+			{% include "actividades/listado_1.html" %}
+		{% else %}
+			{% include "actividades/listado_3.html" %}
+		{% endif %}
+	{% endfor %}	
+{% else %}
+	<div class="small-12 columns listado">
+		{% trans "No hay más registros" %}
+	</div>
+{% endif %}
+
+
+

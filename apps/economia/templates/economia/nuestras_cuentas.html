@@ -1,0 +1,73 @@
+{% load i18n localeurl_tags %}
+
+	<article  class="row">
+		<header>
+			<h5> 
+				{% trans "Tú tienes " %} {{ mis_cuentas|length }} {% trans "cuenta" %}{{ n_mis_cuentas|pluralize }}
+			</h5>
+		</header>
+		<table class="small-12 columns">
+			<tr>
+				<td>{% trans "Grupo" %}</td>
+				<td>{% trans "Cuenta" %}</td>
+				<td>{% trans "Titulares" %}</td>
+				<td>{% trans "Alias cuenta" %}</td>
+				<td>{% trans "Tipo" %}</td>
+				<td>{% trans "Margen" %}</td>
+				<td>{% trans "Saldo" %}</th>
+				<td>{% trans "Creado" %}</td>
+			</tr>
+			{% for item in mis_cuentas %}
+			<tr>
+				<td>{{ item.grupo }}</td>
+				<td><a href="{% url 'economia-index' item.pk %}">{{ item.cuenta }}</a></td>
+				<td>{{ item.titular }}</td>
+				<td>{{ item.alias }}</td>
+				<td>{{ item.tipo }}</td>
+				<td>{{ item.margen }}</td>
+				<td>{{ item.saldo }}</td>
+				<td>{{ item.creado|date:"d/m/y" }}</td>
+			</tr>
+		{% empty %}
+			<tr>
+				<td colspan="8">No hay movimientos en tu cuenta</td>
+			</tr>
+		{% endfor %}
+		</table>
+		
+		<header>
+			<h5> 
+				@{{ destino }} {% trans "tiene " %} {{ sus_cuentas|length }} {% trans "cuenta" %}{{ n_sus_cuentas|pluralize }}
+			</h5>
+			
+		</header>
+		<table class="small-12 columns">
+			<tr>
+				<td>{% trans "Grupo" %}</td>
+				<td>{% trans "Cuenta" %}</td>
+				<td>{% trans "Titulares" %}</td>
+				<td>{% trans "Alias cuenta" %}</td>
+				<td>{% trans "Tipo" %}</td>
+				<td>{% trans "Margen" %}</td>
+				<td>{% trans "Saldo" %}</th>
+				<td>{% trans "Creado" %}</td>
+				
+			</tr>
+			{% for item in sus_cuentas %}
+			<tr>
+				<td>{{ item.grupo }}</td>
+				<td>{{ item.cuenta }}</td>
+				<td>{{ item.titular }}</td>
+				<td>{{ item.alias }}</td>
+				<td>{{ item.tipo }}</td>
+				<td>{{ item.margen }}</td>
+				<td>{{ item.saldo }}</td>
+				<td>{{ item.creado|date:"d/m/y" }}</td>
+			</tr>
+		{% empty %}
+			<tr>
+				<td colspan="8">No hay movimientos en tu cuenta</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</article>

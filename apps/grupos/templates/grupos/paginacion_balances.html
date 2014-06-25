@@ -1,0 +1,14 @@
+{% load i18n localeurl_tags %}
+
+{% if info %}
+{% for item in info %}
+	{% for cuenta in item.sus_cuentas %}
+			{% include "grupos/balances.html" %}
+		{% endfor %}
+	{% endfor %}	
+{% else %}
+	<tr><td colspan="11">{% trans "No hay registros" %}</td></tr>
+{% endif %}
+
+
+

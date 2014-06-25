@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+
+{% block title %} Market | {{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+
+
+
+<section class="row">
+
+	<div class="twelve columns" id="contendor-central">
+	
+		<header>
+			<h4>
+			Tienes {{ mensaje_sistema.n_mensajes }} mensaje{{ mensaje_sistema.n_mensajes|pluralize }} sin leer
+			</h4>
+		</header>
+		
+		<article>
+			<table>
+				<tr>
+					<th>Remitente</th>
+					<th>Asunto</th>
+					<th>Fecha</th>
+					<th>Leído</th>
+				</tr>
+			
+			{% for item in mensajes_qs %}
+				<tr>
+					<td><a href="{% url 'usuarios-mensaje' item.pk %}">{{ item.remitente }}</a></td>
+					<td>{{ item.asunto }}</td>
+					<td>{{ item.creado }}</td>
+					<td>{{ item.leido }}</td>
+				</tr>
+			{% endfor %}
+			
+			</table>
+
+		</article>
+
+	</div> <!--Fin contendor-central-->
+</section>
+
+
+
+
+{% endblock %}
+
+
+
+

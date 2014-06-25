@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+
+{% block title %} Market | {{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+
+
+
+<section class="row">
+
+	<div class="twelve columns" id="contendor-central">
+	
+		<header>
+			<h4>{{ situacion|upper }}</h4>
+		</header>
+		
+		<article>
+			<table>
+				<tr>
+					<td>Solicitante:</td>
+					<td>
+						{% for foto in solicitud.usu_solicitante.fotos_personales.all %}
+						<img src="{{ foto.foto.url_80x80 }}"  alt="{{ foto.foto.name }}" class="fotos_listado"/> {% if not forloop.last %}&nbsp;{% endif %}
+						{% endfor %}
+						<a href="{% url social-perfil solicitud.usu_solicitante %}">@{{ solicitud.usu_solicitante }}</a>	
+						({{ solicitud.usu_solicitante.nombre }} {{ solicitud.usu_solicitante.apellidos }})
+					</td>
+				</tr>
+				<tr>
+					<td>La actividad que solicita de ti:</td><td>{{ solicitud.actividad }}</td>
+				</tr>
+
+				<tr><td width="200px">Fotos:</td>
+					<td>
+					{% for item in actividad.fotos_actividad.all %}
+					<img src="{{ item.foto.url_80x80 }}"  alt="{{ item.foto.name }}"> {% if not forloop.last %}&nbsp;{% endif %}
+					{% endfor %}           
+					&nbsp;<br/>
+					</td>
+				</tr>
+				<tr><td>Usuario</td><td>
+					{% for foto in actividad.datos_personales.fotos_personales.all %}
+					<img src="{{ foto.foto.url_80x80 }}"  alt="{{ foto.foto.name }}" class="fotos_listado"/> {% if not forloop.last %}&nbsp;{% endif %}
+					{% endfor %}
+					<a href="{% url social-perfil actividad.datos_personales %}" class="enlaces_ordenacion">@{{ actividad.datos_personales }}</a>	
+					({{ actividad.datos_personales.nombre }} {{ actividad.datos_personales.apellidos }})
+					</td>
+				</tr>
+				
+				<tr><td>Etiquetas</td>
+					<td>
+					{% for tag in actividad.get_tags %}
+					<a href="." alt="{{ tag }}" title="{{ tag }}">{{ tag }}</a> {% if not forloop.last %}, {% endif %}
+					{% endfor %}           
+					</td>
+				</tr>
+				{% if tipo_objeto == 'bienes' %}
+					<tr><td>Estimación</td><td>{{ actividad.estimacion }} hora{{ actividad.estimacion|pluralize }}</td></tr>
+					<tr><td>Cantidad</td><td>{{ actividad.cantidad }} </td></tr>         
+				{% else %}
+					<tr><td>Estimación</td><td>{{ actividad.estimacion }} hora{{ actividad.estimacion|pluralize }}</td></tr>
+					<tr><td>Experiencia</td><td>{{ actividad.experiencia }} </td></tr> 
+				{% endif %}
+				
+				<tr><td>Euros</td><td>{{ actividad.precio_euros }} (Precio que se solicita en euros)</td></tr> 
+				<tr><td>Moneda social</td><td>{{ actividad.precio_moneda_social }} (Precio que se solicita en moneda social)</td></tr> 	
+				<tr><td>Descripcion</td><td>{% autoescape off %}{{ actividad.descripcion }}{% endautoescape %}</td></tr>
+
+				<tr><td>creado</td><td>{{ actividad.creado }}</td></tr>
+				<tr><td>modificado</td><td>{{ actividad.modificado }}</td></tr>
+				<tr>
+					<td>Modo de intercambio propuesto:</td><td>{{ solicitud.modo_intercambio }}</td>
+				</tr>
+				<tr>
+					<td>Comentario a tu anuncio:</td><td>{{ solicitud.comentario }}</td>
+				</tr>
+				<tr>
+					<td colspan="2"><h4>Responde a esta solicitud</h4></td>
+				</tr>
+				
+				<form action="{% url economia-solicitud solicitud.pk %}" method="POST">
+				{% csrf_token %}
+				{{ form.as_table }}
+				<tr>
+					<td><a href="{% url economia-solicitudes %}" class="small success button">Volver</a></td>
+					<td><input type="submit" value="Guardar cambios" class="small success button"/></td>
+				</tr>
+				</form>
+				
+			</table>
+		</article>
+	</div> <!--Fin contendor-central-->
+</section>
+
+
+
+
+{% endblock %}
+

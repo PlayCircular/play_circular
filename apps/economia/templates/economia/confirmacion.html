@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load i18n localeurl_tags %}
+
+
+{% block title %} {{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+
+<section class="row">
+
+	
+	<header  class="small-12 columns">
+		<h4>{{ situacion|upper }}</h4>
+		</header>
+		
+		<article  class="small-12 columns">
+
+			{% if ok %}
+				<h5>{% trans "Ir a la página de mi contabilidad: " %}<a href="{% url 'economia-index' 0 %}">{% trans "Contabilidad" %}</a></h5>
+				{% if actividad %}
+					<h5>{% trans "Puedes dejar una valoración de la actividad" %}</h5>
+					<div id="cargando_actividad" class="pelotica-invisible">
+						<div class="row panel">
+						<table class="small-12 columns" height="200"> 
+							<tr><td><div align="center"><img src="{{ STATIC_URL }}imagenes/interface/loader.gif"  alt="cargando..."/></div></td></tr>
+						</table>
+						</div>
+					</div>
+					<div id="cargador_actividad">
+						{% include "actividades/form_opinion.html" %}
+					</div>
+				{% endif %}
+			{% else %}
+				{% trans "La operación no se puede realizar." %}
+			{% endif %}
+		</article>
+
+</section>
+
+
+
+
+{% endblock %}
+
+
+
+

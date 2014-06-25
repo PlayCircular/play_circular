@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+
+{% block title %} Market | {{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+
+
+
+<section class="row">
+
+	<div class="twelve columns" id="contendor-central">
+
+		{% include "economia/nuestras_cuentas.html" %}
+		
+		<header>
+			<h4>{{ situacion|upper }}</h4>
+		</header>
+		
+		<article>
+			<table>
+				<tr>
+				<td colspan="2"><h5>{% trans "Vas a pagar" %} {{ item.precio_moneda_social }} {% trans " por la actividad" %}: "{{ item.actividad }}"</h5></td>
+				</tr>
+				<tr>
+				<td colspan="2"><h5>{% trans "Tu saldo actual es de: " %}{{ mi_saldo }}</h5></td>
+				</tr>
+				{% include "actividades/contenido_anuncio.html" %}
+				<tr>
+					<td colspan="2">&nbsp;
+					{% if messages %}
+						{% for message in messages %}
+							<div data-alert class="alert-box {% if message.tags %}{{ message.tags }}{% else %}info{% endif %} radius">
+								{{ message }}
+							<a href="#" class="close">&times;</a>
+							</div>
+						{% endfor %}
+					{% endif %}			
+					</td>
+				</tr>
+				<form action="{% url 'economia-pagar-2' %}" method="POST">
+					{% csrf_token %}
+					{% for field in form %}
+						{% if field.is_hidden %}
+							{{ field }}
+						{% else %}
+						<tr>
+							<td>{{ field.label_tag }}</td>
+							<td>{{ field }}	{% if field.errors %}<small class="error">{{ field.errors }}</small>{% endif %}</td>
+						</tr>
+						{% endif %}
+					{% endfor %}
+					{% if form.errors %}
+						<tr><td colspan="2"><small class="error">{{ form.non_field_errors }}</small></td></tr>
+					{% endif %}
+				<tr>
+					<td><a href="{% url 'economia-index' 0 %}" class="small success button">Volver</a></td>
+					<td><input type="submit" value="Realizar el pago" class="small success button"/></td>
+				</tr>
+				</form>
+				
+			</table>
+		</article>
+	</div> <!--Fin contendor-central-->
+</section>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+	$('#id_cuenta_origen').change(function(event){
+// 		alert($('#id_grupo').val() + ' -- ' + $("div input")[0].value)
+
+		var valor_cuenta_origen = $('#id_cuenta_origen').val()
+		// 		alert(valor_cuenta_origen)
+		
+		if (valor_cuenta_origen != ''){
+
+		$.post("{% url 'economia-cuentas-posibles-ajax' %}", {id_cuenta_origen:$('#id_cuenta_origen').val(),destino:{{ destino.pk }}, csrfmiddlewaretoken:$("div input")[0].value}, function(data){
+			var options = '<option value="" selected="selected">---------</option>';
+			for (var i = 0; i < data.length; i++){
+				options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["cuenta"] +'</option>'
+			}
+			$('#id_cuenta_destino').html(options)
+			$("#id_cuenta_destino option:first").attr('selected', 'selected');
+		}, "json");
+		}
+	});
+
+});
+
+</script>
+
+
+{% endblock %}
+

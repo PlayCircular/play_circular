@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load i18n localeurl_tags %}
+
+{% block metatitle%}{% trans "Estadisticas de las actividades "  %}{{ grupo }}{% endblock %}
+{% block metakeywords %}{{ idioma.palabras_clave }}{% endblock %}
+{% block metadescription %}{{ idioma.meta_descripcion }}{% endblock %}
+{% block metarobots %}{{ idioma.robots }}{% endblock %}"
+
+{% block title %}{{ situacion|upper }} {% endblock %}
+
+{% block extra_head %}
+
+{% endblock %}
+
+{% block content %}
+
+
+<div class="row">
+
+<section>
+		
+	<header>
+		<h4> {% trans "Estadisticas de las actividades del grupo"  %}: {{ grupo }}</h4>
+	</header>
+	
+	<nav class='small-12 columns'>
+		{% include "grupos/submenu_estadisticas.html" %}
+	</nav>
+	
+	<article>
+		<table class="small-4 columns">
+			<tr><td>{% trans "Mes" %}</td><td>{% trans "Actividades publicadas" %}</td></tr>
+		{% for item in qs_altas_x_mes %}
+			<tr><td>{{ item.0|date:"b Y" }}</td><td>{{ item.1 }}</td></tr>
+		{% endfor %}
+		</table>
+	</article>
+	
+	<div class="small-2 columns">&nbsp</div>
+	
+	<article>
+		<table class="small-5 columns end">
+			<tr><td>Número total de actividades publicadas</td><td>{{ n_total_actividades }}</td></tr>
+			<tr><td>Número de actividades ofertadas</td><td>{{ n_total_ofertas }}</td></tr>
+			<tr><td>Número de actividades demandadas</td><td>{{ n_total_demandas }}</td></tr>
+			<tr><td>Número de bienes ofertados</td><td>{{ n_ofertas_bienes }}</td></tr>
+			<tr><td>Número de bienes demandados</td><td>{{ n_demandas_bienes }}</td></tr>
+			<tr><td>Número de servicios ofertados</td><td>{{ n_ofertas_servicios }}</td></tr>
+			<tr><td>Número de servicios demandados</td><td>{{ n_demandas_servicios }}</td></tr>
+			<tr><td>Número de miembros del grupo</td><td>{{ n_miembros }}</td></tr>
+			<tr><td>Media de actividades por miembro</td><td>{{ media_actividad_miembro }}</td></tr>
+			<tr><td>Media de rating de actividades</td><td>{{ media_valor_antes_total }}</td></tr>
+			<tr><td>Media de rating de ofertas de bienes</td><td>{{ media_valor_antes_ofertas_bienes }}</td></tr>
+			<tr><td>Media de ratings de ofertas de servicios</td><td>{{ media_valor_antes_ofertas_servicios }}</td></tr>
+			<tr><td>Media de ratings de demandas de bienes</td><td>{{ media_valor_antes_demanda_bienes }}</td></tr>
+			<tr><td>Media de ratings de demandas de servicios</td><td>{{ media_valor_antes_demanda_servicios }}</td></tr>
+			<tr><td>Porcentaje de interés en ofertas de bienes</td><td>{{ p_interes_oferta_bienes }} %</td></tr>
+			<tr><td>Porcentaje de interés en ofertas de servicios</td><td>{{ p_interes_oferta_servicios }} %</td></tr>
+			<tr><td>Porcentaje de interés en demandas de bienes</td><td>{{ p_interes_demanda_bienes }} %</td></tr>
+			<tr><td>Porcentaje de interés en demandas de servicios</td><td>{{ p_interes_demanda_servicios }} %</td></tr>
+			<tr><td>Porcentaje de interés en ofertas</td><td>{{ p_interes_ofertas }} %</td></tr>
+			<tr><td>Porcentaje de interés en demandas</td><td>{{ p_interes_demandas }} %</td></tr>
+		</table>
+	</article>
+	
+	<article class="small-6 columns">
+		<canvas id="cuadro_1"></canvas>
+		<canvas id="cuadro_2"></canvas>
+		<canvas id="cuadro_3"></canvas>
+	</article>
+
+	<script class="code" type="text/javascript">
+		var chartdata46 = {
+
+		"config": {
+			"title": "Actividades publicadas",
+			"subTitle": "Desde el inicio del grupo",
+	// 		"minY": -1500,
+			"useVal": "yes",
+			"type": "line"
+		},
+
+		"data": [
+			["mes", 
+			{% for item in qs_altas_x_mes %}
+				'{{ item.0|date:"b" }}'{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			],
+			["actividades",
+			{% for item in qs_altas_x_mes %}
+				{{ item.1 }}{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			]
+			]
+		};
+		ccchart.init("cuadro_1", chartdata46)
+		
+		var chartdata46 = {
+			
+		"config": {
+			"title": "Ofertas y demandas",
+			"subTitle": "Desde el inicio del grupo",
+	// 		"minY": -1500,
+			"useVal": "yes",
+			"type": "line"
+		},
+
+		"data": [
+			["mes", 
+			{% for item in qs_ofertas_x_mes %}
+				'{{ item.0|date:"b" }}'{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			],
+			["Ofertas",
+			{% for item in qs_ofertas_x_mes %}
+				{{ item.1 }}{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			],
+			["Demandas",
+			{% for item in qs_demandas_x_mes %}
+				{{ item.1 }}{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			]
+			]
+		};
+		ccchart.init("cuadro_2", chartdata46)
+		
+		var chartdata46 = {
+			
+		"config": {
+			"title": "Bienes y servicios",
+			"subTitle": "Desde el inicio del grupo",
+	// 		"minY": -1500,
+			"useVal": "yes",
+			"type": "line"
+		},
+
+		"data": [
+			["mes", 
+			{% for item in qs_ofertas_x_mes %}
+				'{{ item.0|date:"b" }}'{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			],
+			["Bienes",
+			{% for item in qs_bienes_x_mes %}
+				{{ item.1 }}{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			],
+			["Servicios",
+			{% for item in qs_servicios_x_mes %}
+				{{ item.1 }}{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			]
+			]
+		};
+		ccchart.init("cuadro_3", chartdata46)
+		
+	</script>
+  
+
+</section>
+
+</div> 
+
+
+{% endblock %}
+
+

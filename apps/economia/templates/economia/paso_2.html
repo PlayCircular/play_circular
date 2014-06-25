@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+
+{% block title %} {{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+<div class="row"   id="contendor-central">
+	<div class="small-12 columns">
+		{% include "economia/nuestras_cuentas.html" %}
+		
+		<header>
+			<h4>{{ situacion|upper }}</h4>
+		</header>
+	</div>
+	
+	{% include "economia/datos_usuario.html" %}
+
+	{% if actividad %}
+		{% include "actividades/contenido_actividad.html" %}
+	{% endif %}
+	
+	<div class="small-12 columns">
+		{% if messages %}
+			{% for message in messages %}
+				<div data-alert class="alert-box {% if message.tags %}{{ message.tags }}{% else %}info{% endif %} radius">
+					{{ message }}
+				<a href="#" class="close">&times;</a>
+				</div>
+			{% endfor %}
+		{% endif %}	
+	</div>
+
+	{% include "economia/formulario_confirmacion.html" %}
+
+
+</div> <!--Fin contendor-central-->
+
+
+
+{% endblock %}
+

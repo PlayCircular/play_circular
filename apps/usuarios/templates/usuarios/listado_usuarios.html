@@ -1,0 +1,26 @@
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+<tr>
+	<td>
+		{% for i in item.fotos_personales.all %}
+			{% thumbnail i.foto "30x30" as im %}
+			<img src="{{ im.url }}" alt="{{ i.foto.name }}" width="{{ im.width }}" height="{{ im.height }}"/>{% if not forloop.last %}&nbsp;{% endif %}
+			{% endthumbnail %}
+		{% endfor %}
+	</td>
+	<td><a href="{% url 'social-perfil' item %}">@{{ item }}</a></td>
+	<td>{{ item.nombre }} {{ item.apellidos }}</td>
+	<td>{{ item.poblacion }}</td>
+	<td>{{ item.usuario.email }}</td>
+	<td>{{ item.telefono }}</td>
+	<td>{{ item.creado|date:"d/m/y" }}</td>
+	<td>{{ item.usuario.last_login|date:"d/m/y" }}</td>
+	<td>
+		<a href="{% url 'social-perfil' item.usuario %}" class="tiny success button">{% trans 'Ver perfil' %}</a>
+		{% if user != item.usuario %}
+		<a href="{% url 'economia-pagar-1' 0 item.usuario.pk 0 %}" class="tiny success button">{% trans 'Pagarle' %}</a>
+		{% endif %}
+	</td>
+</tr>
+

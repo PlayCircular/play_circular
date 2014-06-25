@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load i18n localeurl_tags %}
+
+{% block title %}{{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+
+<section class="row">
+
+	<div class="small-12 columns">
+
+		{% include "economia/mis_cuentas.html" %}
+		
+		<article>
+			<header>
+				<h5> 
+					{% if id_cuenta > 0 %}
+						{{ n_intercambios }} {% trans "movimientos en tu cuenta en" %} {{ request.user.date_joined|timesince }}
+					{% else %}
+						{{ n_intercambios }} {% trans "movimientos en todas tus cuentas en" %} {{ request.user.date_joined|timesince }}
+					{% endif %}
+				</h5>
+				
+			</header>
+			
+			<table id="tabla_1">
+				<thead>
+					<tr>
+						<th>{% trans "Operación" %}</th>
+						<th>{% trans "Origen" %}</th>
+						<th>{% trans "Destino" %}</th>
+						<th>{% trans "Cuenta origen" %}</th>
+						<th>{% trans "Cuenta destino" %}</th>
+						<th>{% trans "Cantidad" %}</th>
+						<th>{% trans "Actividad" %}</th>
+						<th>{% trans "Concepto" %}</th>
+						<th>{% trans "Fecha" %}</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for item in intercambio_qs %}
+					{% include "economia/intercambio.html" %}
+				{% empty %}
+					<tr><td colspan="9">{% trans "No hay registros" %}</td></tr>
+				{% endfor %}
+				</tbody>
+			</table>
+			<div id="cargando-paginas" class="pelotica-invisible small-12 columns"></div>
+		</article>
+
+	</div>
+</section>
+
+
+<script type="text/javascript">
+	// Variables globales de scroll
+	{% if n_paginas.object_list and n_paginas.paginator.num_pages > 1 %}
+		var page = {{ n_paginas.number }}; // The latest page loaded
+		var n_paginas = {{ n_paginas.paginator.num_pages }};
+	{% else %}
+		var page = 1;
+		var n_paginas = 1;
+	{% endif %}
+	
+	var loadOnScroll = function() {
+ 		if($(window).scrollTop() == $(document).height() - $(window).height()){
+ 			if ($(window).scrollTop() > $(document).height() - ($(window).height()*2)) {
+				$(window).unbind();
+				cargar_paginas();
+ 			}
+		};
+	};
+
+	var cargar_paginas = function() {
+		page = page + 1;
+		if (page > n_paginas) {
+			return false
+		} else {
+			$('#cargando-paginas').removeClass("pelotica-invisible").addClass("pelotica-visible");
+			$.ajax({
+				url: "{% url 'economia-index' id_cuenta %}?page=" + page,
+				success: function(html)	{
+					if(html){
+						$('#tabla_1 tbody').append(html);
+						$('#cargando-paginas').removeClass("pelotica-visible").addClass("pelotica-invisible");
+					}else{
+						$('#cargando-paginas').html('<center>No hay más elementos..</center>');
+					}
+				},
+				complete: function(data, textStatus){
+					// Turn the scroll monitor back on
+					$(window).bind('scroll', loadOnScroll);
+				}
+			});
+		}
+	};
+				
+	$(window).bind('scroll', loadOnScroll);
+
+</script>
+
+
+{% endblock %}
+
+
+

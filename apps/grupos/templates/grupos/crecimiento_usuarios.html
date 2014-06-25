@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load i18n localeurl_tags %}
+
+{% block title %}{{ situacion|upper }} {% endblock %}
+
+{% block extra_head %}
+
+{% endblock %}
+
+{% block content %}
+
+
+<div class="row" id="contendor-central">
+
+<section>
+		
+	<header>
+		<h4> {% trans "Estadisticas de crecimento de usuarios del grupo"  %}: {{ grupo }}</h4>
+	</header>
+	
+	<nav class='small-12 columns'>
+		{% include "grupos/submenu_estadisticas.html" %}
+	</nav>
+	
+	<article class="small-5 columns">
+		<table>
+			<tr><td>{% trans "Mes" %}</td><td>{% trans "Altas de usuarios" %}</td></tr>
+		{% for item in qs_altas_x_mes %}
+			<tr><td>{{ item.0|date:"b Y" }}</td><td>{{ item.1 }}</td></tr>
+		{% endfor %}
+		</table>
+	</article>
+	
+	<article class="small-6 columns">
+		<canvas id="cuadro_1"></canvas>
+	</article>
+
+	<script class="code" type="text/javascript">
+		var chartdata46 = {
+
+		"config": {
+			"title": "Altas de usuarios",
+			"subTitle": "Desde el inicio del grupo",
+	// 		"minY": -1500,
+			"useVal": "yes",
+			"type": "line"
+		},
+
+		"data": [
+			["mes", 
+			{% for item in qs_altas_x_mes %}
+				'{{ item.0|date:"b" }}'{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			],
+			["altas",
+			{% for item in qs_altas_x_mes %}
+				{{ item.1 }}{% if not forloop.last %}, {% endif %}
+			{% endfor %}
+			]
+			]
+		};
+		ccchart.init("cuadro_1", chartdata46)
+		
+
+	</script>
+
+</section>
+
+</div> <!--Fin contendor-central-->
+
+
+{% endblock %}
+
+

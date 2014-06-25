@@ -1,0 +1,77 @@
+﻿{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags mptt_tags portada_filtros %}
+
+
+{% block extra_head %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+	<section class="small-12 columns">
+		<h4>{% trans "Páginas " %}</h4>
+		{% for node,structure in nodes|tree_info %}
+		{% if structure.new_level %}<ul><li>{% else %}</li><li>{% endif %}
+		<a href="{% url 'ver-pagina' node.pk node.pk|get_titulo_idioma:LANGUAGE_CODE|slugify %}">{{ node.pk|get_titulo_idioma:LANGUAGE_CODE }}</a>
+		{% for level in structure.closed_levels %}</li></ul>{% endfor %}
+		{% endfor %}
+		
+	</section>
+
+	<section class="small-12 columns">
+	
+		<h4>{% trans "Últimas propuestas" %}</h4>
+		{% for item in ultimas_propuestas %}
+			<br><h5><a href="{{ item.get_absolute_url }}" title="{{ item }}">{{ item }}</a></h5>
+			<div>{{ item.intro }}</div>
+			<div><i class="right"><a href="{% url 'social-perfil' item.usuario %}">@{{ item.usuario }}</a> {% trans "Publicado en: " %}{{ item.grupos }} </i></div>
+			<div><i class="right">{% trans "Hace: " %}{{ item.creada|timesince }}</i></div>
+		{% empty %}
+			<div>{% trans "No hay registros" %}</div>
+		{% endfor %}
+		
+		<br><br><h4>{% trans "Últimas entradas" %}</h4>
+		{% for item in ultimas_entradas %}
+			<br><h5><a href="{{ item.get_absolute_url }}" title="{{ item }}">{{ item }}</a></h5>
+			<div>{{ item.intro }}</div>
+			<div><i class="right"><a href="{% url 'social-perfil' item.usuario %}">@{{ item.usuario }}</a> {% trans "Publicado en: " %}{{ item.grupos }} </i></div>
+			<div><i class="right">{% trans "Hace: " %}{{ item.creada|timesince }}</i></div>
+		{% empty %}
+			<div>{% trans "No hay registros" %}</div>
+		{% endfor %}
+		
+		<br><br><h4>{% trans "Últimas actividades" %}</h4>
+		{% for item in ultimas_actividades %}
+			<br><h5><a href="{{ item.get_absolute_url }}" title="{{ item }}">{{ item }}</a></h5>
+			<div>{{ item.intro|slice:":300" }} {% if item.intro|length > 300 %}...{% endif %}</div>
+			<div><i class="right"><a href="{% url 'social-perfil' item.usuario %}">@{{ item.usuario }}</a> {% trans "Publicado en: " %}{{ item.grupos }} </i></div>
+			<div><i class="right">{% trans "Hace: " %}{{ item.creado|timesince }}</i></div>
+		{% empty %}
+			<div>{% trans "No hay registros" %}</div>
+		{% endfor %}
+
+		
+	</section>
+	
+	
+	<section class="small-12 columns">
+		
+		<br><br><h5>{% trans "Últimos intercambios públicos" %}</h5>
+		<ul>
+		{% for item in ultimos_intercambios_p %}
+		<li><a href="{% url 'social-perfil' item.origen %}">@{{ item.origen }}</a> > {{ item }} > <a href="{% url 'social-perfil' item.destino %}">@{{ item.destino }}</a> ({{ item.creado|timesince }})</li>
+		{% empty %}
+			<li>{% trans "No hay registros" %}</li>
+		{% endfor %}
+		</ul>
+		
+	</section>
+	
+
+</div> <!--Fin contendor-central-->
+
+
+{% endblock %}

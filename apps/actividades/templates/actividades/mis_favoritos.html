@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load i18n localeurl_tags %}
+
+
+{% block title %}{{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+{% include "actividades/form_busqueda.html" %}
+
+<div class="row" id="contendor-central">
+
+<section class="small-12 columns" id="listado">
+	{% if mis_favoritos %}
+	<header>
+		{{ situacion|upper }}
+	</header>
+	{% for actividad in n_paginas.object_list %}
+		{% include "actividades/listado_1.html" %}
+	{% endfor %}
+		<div id="cargando-paginas" class="pelotica-invisible"></div>	
+	{% else %}
+		<header class="row">
+			<div class="panel">{% trans "No te interesa ninguna actividad" %}</div>
+		</header>
+	{% endif %}
+</section>
+    
+    
+</div> <!--Fin contendor-central-->
+
+<script type="text/javascript">
+	// Variables globales de scroll
+	{% if n_paginas.object_list and n_paginas.paginator.num_pages > 1 %}
+		var page = {{ n_paginas.number }}; // The latest page loaded
+		var n_paginas = {{ n_paginas.paginator.num_pages }};
+	{% else %}
+		var page = 1;
+		var n_paginas = 1;
+	{% endif %}
+	
+	var loadOnScroll = function() {
+//  		if($(window).scrollTop() == $(document).height() - $(window).height()){
+//  			if ($(window).scrollTop() > $(document).height() - ($(window).height()*2)) {
+			if ($(window).scrollTop() > $(document).height() - ($(window).height()*1.2)) {
+			// temporarily unhook the scroll event watcher so we don't call a bunch of times in a row
+ 			$(window).unbind();
+			// execute the load function below 
+			cargar_paginas();
+//  			alert('Funciona');
+		}
+	};
+
+	var cargar_paginas = function() {
+		page = page + 1;
+		if (page > n_paginas) {
+// 				alert(page)
+			return false
+		} else {
+// 			alert(page + ' >>')
+			$('#cargando-paginas').removeClass("pelotica-invisible").addClass("pelotica-visible");
+			$.ajax({
+				url: "{% url 'actividad-mis-favoritos' %}?page=" + page,
+				success: function(html)	{
+					if(html){
+						$("#listado").append(html);
+ 						$('#cargando-paginas').removeClass("pelotica-visible").addClass("pelotica-invisible");
+// 						$('#cargando-paginas').show(1000);
+					}else{
+						$('#cargando-paginas').html('<center>No hay más favoritos..</center>');
+					}
+				},
+				complete: function(data, textStatus){
+					// Turn the scroll monitor back on
+					$(window).bind('scroll', loadOnScroll);
+				}
+			});
+		}
+	};
+
+</script>
+
+<script type="text/javascript">
+
+$(window).bind('scroll', loadOnScroll);
+
+</script>
+
+{% endblock %}
+
+{% block pie %}
+	
+	<!-- Next/Prev page links  -->
+	{% if n_paginas.object_list and n_paginas.paginator.num_pages > 1 %}
+	<div class="panel">
+		<span class="step-links">
+		{% if n_paginas.has_previous %}
+			<a href= "?page={{ n_paginas.previous_page_number }}">Anterior &lt;&lt; </a>
+		{% endif %}
+
+		<span class="current">
+		&nbsp;Página {{ n_paginas.number }} de {{ n_paginas.paginator.num_pages }}
+		</span>
+
+		{% if n_paginas.has_next %}
+		<a href="?page={{ n_paginas.next_page_number }}"> &gt;&gt; Siguiente</a>
+		{% endif %}
+		</span>
+	</div>
+	{% else %}
+		<div class="panel">Página 1 de 1</div>
+	{% endif %}
+
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load i18n localeurl_tags %}
+
+
+{% block title %}{% trans "Busqueda de usuarios" %} {% endblock %}
+
+{% block content %}
+
+
+<div class="row">
+
+	<header class="small-12 columns">
+		<h3>{% trans "Resultados para tu búsqueda" %}</h3>
+	</header>
+	
+	<div class="small-12 columns">
+		<a href="#" id="nueva_busqueda" title="{% trans "Nueva búsqueda" %}"  class="tiny success button">{% trans "Nueva búsqueda" %}</a>
+	</div>
+	
+	<div class="small-6 columns hide" id="formulario">
+		<form action="{% url 'usuarios-busqueda' %}" method="POST" id="form_usuarios">
+			{% csrf_token %}
+			<ul class="side-nav">
+				{{ form.as_ul }}
+				<li>
+					<input type="hidden" name="page" id="id_page" value="{% if n_paginas.object_list and n_paginas.paginator.num_pages > 1 %}{{ n_paginas.number }}{% else %}1{% endif %}"/>
+					<input type="submit" value="{% trans 'Buscar usuario' %}" class="tiny success button"/>
+				</li>
+			</ul>
+		</form>
+	</div>
+
+	<section>
+		<table class="small-12 columns" id="tabla_1">
+			<thead>
+			<tr>
+				<th>{% trans "Fotos" %}</th>
+				<th>{% trans "Usuario" %}</th>
+				<th>{% trans "Nombre completo" %}</th>
+				<th>{% trans "Población" %}</th>
+				<th>{% trans "Email" %}</th>
+				<th>{% trans "Teléfono" %}</th>
+				<th>{% trans "Alta" %}</th>
+				<th>{% trans "Último acceso" %}</th>
+				<th>{% trans "Acciones" %}</th>
+			</tr>
+			</thead>
+			<tbody>	
+			{% for item in n_paginas.object_list %}
+				{% ifchanged %}
+					{% include "usuarios/listado_usuarios.html" %}
+				{% endifchanged %}
+			{% empty %}
+				<tr>
+					<td colspan="9">{% trans "Tu búsqueda no da ningún resultado" %}</td>
+				</tr>			
+			{% endfor %}
+			</tbody>
+		</table>
+		<div id="cargando-paginas" class="pelotica-invisible"></div>
+	</section>
+
+</div>
+
+
+
+<script type="text/javascript">
+	// Variables globales de scroll
+	{% if n_paginas.object_list and n_paginas.paginator.num_pages > 1 %}
+		var page = {{ n_paginas.number }}; // The latest page loaded
+		var n_paginas = {{ n_paginas.paginator.num_pages }};
+	{% else %}
+		var page = 1;
+		var n_paginas = 1;
+	{% endif %}
+	
+	var loadOnScroll = function() {
+		if($(window).scrollTop() == $(document).height() - $(window).height()){
+			if ($(window).scrollTop() > $(document).height() - ($(window).height()*2)) {
+				$(window).unbind();
+				cargar_paginas();
+				}
+			};
+	};
+			
+	var enviar_form = function(){
+		
+		var url = $('#form_usuarios').attr('action');  
+		var data = $('#form_usuarios').serialize();  
+		$.post(url, data, function(status) {  
+			$('#cargador_actividad').show();
+			$('#cargando_actividad').removeClass("pelotica-visible").addClass("pelotica-invisible");
+			$('#cargador_actividad').html(status); 
+		}); 
+		
+	};
+
+	var cargar_paginas = function() {
+		page = page + 1;
+		if (page > n_paginas) {
+			return false
+		} else {
+			$('#cargando-paginas').removeClass("pelotica-invisible").addClass("pelotica-visible");
+			var url = $('#form_usuarios').attr('action');
+			$("#id_page").val(page);
+			var data = $('#form_usuarios').serialize();  
+			$.post(url, data, function(status) {  
+				$("#tabla_1 tbody").append(status);
+				$('#cargando-paginas').removeClass("pelotica-visible").addClass("pelotica-invisible");
+				$(window).bind('scroll', loadOnScroll);
+			}); 
+		}
+	};
+				
+ 	$(window).bind('scroll', loadOnScroll);
+				
+	$('#nueva_busqueda').click(function(){
+		$('#formulario').show(1000);
+		$("#id_page").val(1);
+	});
+
+</script>
+
+{% endblock %}
+
+
+
+

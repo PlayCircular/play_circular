@@ -1,0 +1,12 @@
+
+{% if mis_favoritos %}
+	{% for item in n_paginas %}
+		{% ifchanged %}
+			{% include "actividades/listado.html" %}
+		{% endifchanged %}
+	{% endfor %}
+{% else %}
+	<div class="small-12 columns listado">
+		{% trans "No hay más registros" %}
+	</div>
+{% endif %}

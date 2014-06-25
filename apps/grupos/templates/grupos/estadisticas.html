@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+{% block metatitle%}{% trans "Estadisticas "  %}{{ grupo }}{% endblock %}
+{% block metakeywords %}{{ idioma.palabras_clave }}{% endblock %}
+{% block metadescription %}{{ idioma.meta_descripcion }}{% endblock %}
+{% block metarobots %}{{ idioma.robots }}{% endblock %}"
+
+{% block title %}{% trans "Estadisticas "  %}{{ grupo }}{% endblock %}
+
+{% block extra_head %}
+
+{% endblock %}
+
+{% block content %}
+
+
+<div class="row" id="contendor-central">
+
+<section>
+
+		
+	<header>
+		<h4> {% trans "Estadisticas del grupo"  %}: {{ grupo }}</h4>
+	</header>
+	
+	<nav class='small-12 columns'>
+		{% include "grupos/submenu_estadisticas.html" %}
+	</nav>
+	
+	<article class="small-12 columns">
+		<table>
+			<tr><td>{% trans "Grupo" %}</td><td>
+				{% if grupo.logo_grupo %}
+					{% thumbnail grupo.logo_grupo "80x80" as im %}
+					<img src="{{ im.url }}" alt="{{ im.logo_grupo.name }}"  width="{{ im.width }}" height="{{ im.height }}"/>
+					{% endthumbnail %}
+				{% endif %} 
+			
+			{{ grupo.nombre }} ({{ grupo.simbolo }}). {{ idioma.eslogan }}
+			
+			{% for item in grupo.mas_fotos_grupo.all %}
+				{% thumbnail item.foto "80x80" as im %}
+				<img src="{{ im.url }}" alt="{{ item.foto.name }}" width="{{ im.width }}" height="{{ im.height }}"/>{% if not forloop.last %}&nbsp;{% endif %}
+				{% endthumbnail %}
+			{% endfor %}
+			
+			</td></tr>
+			<tr><td>{% trans "Fecha de creación" %}</td><td>{{ grupo.creado|date:"d/m/y" }} - ({% trans "Hace" %} {{ grupo.creado|timesince }})</td></tr>
+			<tr>
+				<td>{% trans "País" %}:</td><td>{{ grupo.pais }}</td>
+			</tr>
+			<tr>
+				<td>{% trans "Provincia" %}:</td><td>{{ grupo.provincia }}</td>
+			</tr>
+			<tr>
+				<td>{% trans "Población" %}:</td><td>{{ grupo.poblacion }}</td>
+			</tr>
+			<tr>
+				<td>{% trans "Email de contacto" %}:</td><td>{{ grupo.email }}</td>
+			</tr>
+			{% for item in grupo.social_grupo.all %}
+			<tr>
+				<td>{{ item.nombre }}:</td><td>{{ item.referencia }}</td>
+			</tr>
+			{% endfor %}
+
+			<tr><td>{% trans "Número de administradores" %}</td><td>{{ info.0.n_admin }}</td></tr>
+			<tr><td>{% trans "Número de miembros" %}</td><td>{{ info.0.n_miembros }}</td></tr>
+			<tr><td>{% trans "Operaciones totales" %}</td><td>{{ info.0.n_operaciones }}</td></tr>
+			<tr><td>{% trans "Valor medio por operación" %}</td><td>{{ info.0.valor_medio_op }}</td></tr>
+			<tr><td>{% trans "Operaciones por día" %}</td><td>{{ info.0.operaciones_x_dia }}</td></tr>
+			<tr><td>{% trans "Operaciones último mes" %}</td><td>{{ info.0.op_ultimo_mes }}</td></tr>
+			<tr><td>{% trans "Operaciones última semana" %}</td><td>{{ info.0.op_ultima_semana }}</td></tr>
+			<tr>
+			<td>{% trans "Margenes operativos del grupo" %}:</td>
+					<td>
+					{% trans "Superior: " %}{{ config.margen_superior_grupo }} {{ grupo.unidad_p }}<br>
+					{% trans "Inferior: " %}{{ config.margen_inferior_grupo }} {{ grupo.unidad_p }}
+					</td>
+			</tr>
+			<tr>
+			<td>{% trans "Margenes de los usuarios:" %}</td>
+				<td>
+					{% for item in config.margenes_grupo.all %}
+						{{ item.nombre }}</br>
+					{% endfor %}
+				</td>
+			</tr>
+			<tr>
+				<td>{% trans "Tasa de oxidación" %}:</td><td>{{ config.interes_negativo }}</td>
+			</tr>
+			<tr>
+				<td>{% trans "Periodicidad de la tasa" %}:</td><td>{{ config.periodicidad_interes }}</td>
+			</tr>
+			<tr>
+				<td>{% trans "Impuestos:" %}</td><td>{{ config.impuestos_transaccion }} %</td>
+			</tr>
+			<tr>
+				<td>{% trans "Permite el comercio intergrupos: " %}</td><td>{{ config.comercio_intergrupos|yesno:"Si,No"  }}</td>
+			</tr>
+			<tr>
+				<td>{% trans "Impuestos intergrupos " %}</td><td>{{ config.impuestos_intergrupos }} %</td>
+			</tr>	
+	
+		</table>
+	</article>
+
+</section>
+
+</div> <!--Fin contendor-central-->
+
+
+{% endblock %}
+
+

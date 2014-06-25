@@ -1,0 +1,93 @@
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+<form action="{{ url }}" method="POST" id="form_pago_1">
+	<table class="small-12 columns">
+	<tr><td colspan="2"><h4>{% trans "Formulario de pago" %}</h4></td><tr>
+		{% csrf_token %}
+		{% for field in form %}
+			{% if field.is_hidden %}
+				{{ field }}
+			{% else %}
+			<tr>
+				<td>{{ field.label_tag }}</td>
+				<td>{{ field }}	{% if field.errors %}<small class="error">{{ field.errors }}</small>{% endif %}</td>
+			</tr>
+			{% endif %}
+		{% endfor %}
+		{% if form.errors %}
+			<tr><td colspan="2"><small class="error">{{ form.non_field_errors }}</small></td></tr>
+		{% endif %}
+	<tr>
+		<td><a href="{{ url }}" class="small success button">Volver</a></td>
+		<td><input type="submit" value="Realizar el pago" class="small success button"/></td>
+	</tr>
+			
+	</table>
+</form>
+
+<script type="text/javascript">
+// No funciona el document.ready por ajax
+// $(document).ready(function(){
+
+
+	$('#id_cuenta_origen').change(function(event){
+		var valor_cuenta_origen = $('#id_cuenta_origen').val()
+		var valor_actividad = $('#id_actividad').val()
+		var datos_post = {id_cuenta_origen:valor_cuenta_origen,
+							actividad:valor_actividad, 
+							destino:{{ destino.pk }}, 
+							csrfmiddlewaretoken:$("div input")[0].value}
+		if (valor_cuenta_origen != ''){
+
+		$.post("{% url 'economia-cuentas-posibles-ajax' %}", datos_post, function(data){
+			var options = '<option value="" selected="selected">---------</option>';
+			for (var i = 0; i < data.length; i++){
+				options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["cuenta"] +'</option>'
+			}
+			$('#id_cuenta_destino').html(options)
+			$("#id_cuenta_destino option:first").attr('selected', 'selected');
+		}, "json");
+		}
+	});
+			
+	function actualiza_formulario() {
+		var actividad = $('#id_actividad').val()
+		
+		$('#cargador_formulario').hide();
+		$('#cargando_formulario').removeClass("pelotica-invisible").addClass("pelotica-visible");
+		var url_1 = "/es/economia/pagar_paso_1/" + actividad + "/0/1/";   
+		var data_1 = $('#form_pago_1').serialize();  
+		$.post(url_1, data_1, function(status) { 
+			$('#cargando_formulario').removeClass("pelotica-visible").addClass("pelotica-invisible");
+			$('#cargador_formulario').html(status);
+			$('#cargador_formulario').show();  
+			$('#id_cuenta_origen option:first').attr('selected', 'selected')
+			$('#id_cuenta_destino option:first').attr('selected', 'selected')
+			}); 
+		}
+			
+	$('#id_actividad').change(function(){
+		var actividad = $('#id_actividad').val()
+
+		if (actividad != ''){
+
+			$('#cargador_actividad').hide();
+			$('#cargando_actividad').removeClass("pelotica-invisible").addClass("pelotica-visible");
+			var url_2 = "{% url 'economia-recarga-actividad-ajax' %}";  
+			var data_2 = {actividad:actividad,csrfmiddlewaretoken:$("div input")[0].value}  
+			// 		alert(data);
+			$.post(url_2, data_2, function(status) {  
+					$('#cargador_actividad').show();
+					$('#cargando_actividad').removeClass("pelotica-visible").addClass("pelotica-invisible");
+					$('#cargador_actividad').html(status); 
+				});
+			
+		setTimeout(actualiza_formulario, 1000);	
+		};
+	
+	});
+			
+// });
+
+</script>

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+{% block title %} Market | {{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+
+
+
+<section class="row">
+
+	<div class="twelve columns" id="contendor-central">
+	
+		<header>
+			<h4> Solicitud para entrar en el grupo {{ grupo }}.</h4>
+		</header>
+		
+		<article>
+			<table>
+				<tr>
+					<td>Grupo:</td><td>{{ grupo }}</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+					{% if grupo.logo %}
+					{% thumbnail grupo.logo "80x80" as im %}
+						<img src="{{ im.url }}" alt="{{ grupo.logo_grupo.name }}"  width="{{ im.width }}" height="{{ im.height }}"/>
+					{% endthumbnail %}
+					{% endif %} 
+					{% for item in grupo.mas_fotos_grupo.all %}
+						{% thumbnail item.foto "80x80" as im %}
+							<img src="{{ im.url }}" alt="{{ item.foto.name }}" width="{{ im.width }}" height="{{ im.height }}"/>{% if not forloop.last %}&nbsp;{% endif %}
+					   {% endthumbnail %}
+					{% endfor %}
+					</td>
+				</tr>
+				<tr>
+					<td>Número de miembros:</td><td>{{ n_miembros }}</td>
+				</tr>
+				<tr>
+					<td>Número de administradores:</td>
+					<td>{{ admins|length }}
+					{% for admin in admins %}
+						<a href="{% url 'social-perfil' admin.usuario %}">@{{ admin.usuario }}</a> {% if not forloop.last %},{% endif %}
+					{% endfor %}  				
+					
+					</td>
+				</tr>
+				<tr>
+					<td>Condiciones de entrada:</td><td>{% autoescape off %}{{ idioma.condiciones }}{% endautoescape %}</td>
+				</tr>
+				<tr>
+					<td>Nombre de la moneda:</td><td>{{ grupo.unidad_s }}</td>
+				</tr>
+				<tr>
+					<td>Equivalencia de la unidad:</td><td>{{ config.equivalencia_unidad }} euros</td>
+				</tr>
+				<tr>
+					<td>Equivalencia de la hora:</td><td>{{ config.equivalencia_hora }} {{ grupo.unidad_p }}</td>
+				</tr>
+				<tr>
+					<td>Margenes operativos:</td>
+					<td>
+						{% for item in config.margenes_grupo.all %}
+							{{ item.nombre }}</br>
+						{% endfor %}
+					</td>
+				</tr>
+				<tr>
+					<td>Tiene oxidación:</td><td>{{ config.oxidacion }}</td>
+				</tr>
+				{% if  config.oxidacion %}
+				<tr>
+					<td>Tasa de oxidación:</td><td>{{ config.interes_negativo }}</td>
+				</tr>
+				<tr>
+					<td>Periodicidad de la tasa:</td><td>{{ config.periodicidad_interes }}</td>
+				</tr>			
+				{% endif %}
+
+				<tr>
+					<td>Tipo de alta:</td><td>{{ config.tipo_alta }}</td>
+				</tr>
+				<tr>
+					<td>Permite el comercio intergrupos</td><td>{{ config.comercio_intergrupos }}</td>
+				</tr>	
+				<tr>
+					<td>País:</td><td>{{ grupo.pais }}</td>
+				</tr>
+				<tr>
+					<td>Provincia:</td><td>{{ grupo.provincia }}</td>
+				</tr>
+				<tr>
+					<td>Población:</td><td>{{ grupo.poblacion }}</td>
+				</tr>
+				<tr>
+					<td>Dirección:</td><td>{{ grupo.direccion }}</td>
+				</tr>
+				<tr>
+					<td>CP:</td><td>{{ grupo.codigo_postal }}</td>
+				</tr>
+				<tr>
+					<td>Coordenadas:</td><td>{{ grupo.google_maps_center }}</td>
+				</tr>
+				<tr>
+					<td>Teléfono:</td><td>{{ grupo.telefono }}</td>
+				</tr>
+				<tr>
+					<td>Email de contacto:</td><td>{{ grupo.email }}</td>
+				</tr>
+				{% for item in grupo.social_grupo.all %}
+				<tr>
+					<td>{{ item.nombre }}:</td><td>{{ item.referencia }}</td>
+				</tr>
+				{% endfor %}
+
+				<form action="{% url 'grupos-solicitud-miembro' grupo.pk %}" method="POST">
+					{% csrf_token %}
+					{% for field in form %}
+					<tr><td>{{ field.label_tag }}</td><td>{{ field }} 
+					{% if field.errors %}<small class="error">{{ field.errors }}</small>{% endif %}</td>
+					{% endfor %}
+					<tr>
+						<td colspan="2"><input type="submit" value="Solicitar la entrada en este grupo" class="tiny success button"/></td>
+					</tr>
+				</form>
+			</table>
+
+		</article>
+
+	</div> <!--Fin contendor-central-->
+</section>
+
+
+
+
+{% endblock %}
+
+{% block pie %}
+
+{% endblock %}
+
+

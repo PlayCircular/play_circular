@@ -1,0 +1,14 @@
+{% load i18n localeurl_tags %}
+
+{% if intercambios_p %}
+	{% for item in intercambios_p %}
+		{% include "economia/intercambio_p.html" %}
+	{% endfor %}	
+{% else %}
+	<header class="row">
+		<div class="panel">{% trans "No hay registros" %}</div>
+	</header>
+{% endif %}
+
+
+

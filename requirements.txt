@@ -1,0 +1,20 @@
+Django 1.6
+pip install PIL --allow-external PIL --allow-unverified PIL
+south
+django-localeurl
+django-rosetta  
+django-datatrans
+django-taggit
+django-qsstats-magic 
+python-dateutil
+sorl-thumbnail==11.12
+mysql-python
+psycopg2
+django-tinymce
+django_mptt
+django_mptt_admin
+python-openid
+python-oauth2
+python-social-auth
+
+

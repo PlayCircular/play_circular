@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+
+{% block title %} Market | {{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+
+<section class="row">
+
+	<div class="twelve columns" id="contendor-central">
+	
+		<header>
+			<h4>{{ situacion|upper }}</h4>
+		</header>
+		
+		<article>
+			<table>
+				<tr>
+				<td colspan="2"><h5>{% trans "Pago al usuario:" %}
+				<a href="{% url 'social-perfil' destino %}">@{{ destino }}</a>
+				({{ dp_destino.nombre }} {{ dp_destino.apellidos }})</h5></td>
+				</tr>
+				<tr>
+				<td colspan="2">
+					{% include "economia/nuestras_cuentas.html" %}
+				</td>
+				</tr>
+				<tr>
+					<td colspan="2">&nbsp;</td>
+				</tr>	
+				<form action="{% url 'economia-pagar-2' %}" method="POST">
+				{% csrf_token %}
+			{% for field in form %}
+				{% if field.is_hidden %}
+					{{ field }}
+				{% else %}
+				<tr>
+					<td>{{ field.label_tag }}</td>
+					<td>{{ field }}	{% if field.errors %}<small class="error">{{ field.errors }}</small>{% endif %}</td>
+				<td colspan="2">&nbsp;</td></tr>
+				{% endif %}
+			{% endfor %}
+			{% if form.errors %}
+				<tr><td colspan="2"><small class="error">{{ form.non_field_errors }}</small></td></tr>
+			{% endif %}
+				<tr>
+					<td><a href="{% url 'economia-index' 0 %}" class="small success button">Volver</a></td>
+					<td><input type="submit" value="Realizar el pago" class="small success button"/></td>
+				</tr>
+				</form>
+				
+			</table>
+		</article>
+	</div> <!--Fin contendor-central-->
+</section>
+
+
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+	$('#id_actividad').change(function(){
+		var actividad_elegida = document.getElementById("id_actividad").value;
+		var valor = $("#id_actividad option:selected").html();
+// 		alert(valor)
+		var cadena = valor.split(' - - ');
+		var nombre_actividad = cadena[0];
+		var precio_social = cadena[1];
+//  		alert(nombre_actividad + ' ' + precio_social)
+		$('#id_concepto').val(nombre_actividad);
+		$('#id_cantidad').val(precio_social);
+	});
+	
+	$('#id_cuenta_origen').change(function(event){
+// 		alert($('#id_grupo').val() + ' -- ' + $("div input")[0].value)
+		var valor_cuenta_origen = $('#id_cuenta_origen').val()
+// 		alert(valor_cuenta_origen)
+		
+		if (valor_cuenta_origen != ''){
+		$.post("{% url 'economia-cuentas-posibles-ajax' %}", {id_cuenta_origen:$('#id_cuenta_origen').val(),destino:{{ destino.pk }}, csrfmiddlewaretoken:$("div input")[0].value}, function(data){
+			var options = '<option value="" selected="selected">---------</option>';
+			for (var i = 0; i < data.length; i++){
+				options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["cuenta"] +'</option>'
+			}
+			$('#id_cuenta_destino').html(options)
+			$("#id_cuenta_destino option:first").attr('selected', 'selected');
+			//var debug = $(".contenidos .contenedor_conf h2");
+			//$(debug).html(data[0].fields.anio)
+			//$("debug").html(data);
+		}, "json");
+		}
+	});
+
+});
+
+</script>
+
+{% endblock %}
+

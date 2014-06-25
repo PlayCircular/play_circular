@@ -1,0 +1,178 @@
+﻿{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags mptt_tags portada_filtros %}
+
+{% block metatitle%}{{ grupo.nombre }}{% endblock %}
+{% block metakeywords %}{{ grupo.palabras_clave }}{% endblock %}
+{% block metadescription %}{{ grupo.meta_descripcion }}{% endblock %}
+{% block metarobots %}{{ grupo.robots }}{% endblock %}
+{% block favicon1 %}{% thumbnail grupo.logo "24x24" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% endblock %}
+{% block favicon2 %}{% thumbnail grupo.logo "24x24" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% endblock %}
+
+{% block title %}{{ grupo.nombre }}{% endblock %}
+
+{% block extra_head %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/foundation/foundation.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/foundation/foundation.orbit.js"></script>
+{% endblock %}
+
+{% block logo %}
+
+	<div class="centrado">
+		<img class="img_centrada" src='{% thumbnail grupo.logo "180x180" crop="center" as im %}{{ im.url }}{% endthumbnail %}'>
+		<h4>{{ grupo.nombre }}</h4>
+		<h6><i>{{ grupo.eslogan }}</i></h6>
+	</div>
+
+{% endblock %}
+
+{% block banners %}
+
+	<ul class="example-orbit" data-orbit
+								data-options="animation:slide;
+								timer_speed:{% if config.tiempo_diapositivas > 0 %}{{ config.tiempo_diapositivas }}{% else %}5000{% endif %};
+								navigation_arrows:true;
+								bullets:false;">
+		{% for banner in banners %}
+		<li>
+			{% thumbnail banner.banner "970x300" as im %}
+				{% if banner.url != '' %}
+				<a href="{{ banner.url }}">
+				<img src="{{ im.url }}"  alt="{{ banner.titulo }}" width="{{ im.width }}" height="{{ im.height }}"/></a>
+				{% else %}
+				<img src="{{ im.url }}"  alt="{{ banner.titulo }}" width="{{ im.width }}" height="{{ im.height }}"/>
+				{% endif %}
+			{% endthumbnail %}
+			<div class="orbit-caption">
+				{{ banner.titulo }}
+			</div>
+		</li>
+		{% endfor %}
+	</ul>
+
+{% endblock %}
+
+
+{% block menu_grande %}
+	{% if user.is_authenticated %}
+		{% include "menu_login_grupo.html" %}
+	{% else %}
+		{% include "menu_logout_grupo.html" %}
+	{% endif %}
+{% endblock %}
+
+
+{% block situacion %}
+<li><a href="{% url 'portada-grupo' grupo.pk grupo.nombre|slugify %}">{{ grupo.nombre }}</a></li>
+<li class="current"><a href="{% url 'portada' %}">{{ situacion|upper }}</a></li>
+{% endblock %}
+
+{% block menu_chico %}
+	{% if user.is_authenticated %}
+		{% include "menu_login_grupo.html" %}
+	{% else %}
+		{% include "menu_logout_grupo.html" %}
+	{% endif %}
+{% endblock %}
+
+{% block minilogo %}
+
+	<div class="centrado">
+	<img class="img_centrada" src='{% thumbnail grupo.logo "120x120" crop="center" as im %}{{ im.url }}{% endthumbnail %}'>
+	<h4>{{ grupo.nombre }}</h4>
+	<h6><i>{{ grupo.eslogan }}</i></h6>
+	</div>
+	
+{% endblock %}
+
+{% block content %}
+
+	
+<div class="row">
+
+		<section class="small-12 columns">
+			<h5>{% trans "Páginas del grupo " %}{{ grupo.nombre }}</h5>
+			
+			{% for node,structure in nodes|tree_info %}
+			{% if structure.new_level %}<ul><li>{% else %}</li><li>{% endif %}
+			<a href="{% url 'ver-pagina' node.pk node.pk|get_titulo_idioma:LANGUAGE_CODE|slugify %}">{{ node.pk|get_titulo_idioma:LANGUAGE_CODE }}</a>
+			{% for level in structure.closed_levels %}</li></ul>{% endfor %}
+			{% endfor %}
+			<ul>
+				<li><a href="{% url 'ver-pagina-general' grupo.pk 'terminos_y_condiciones' %}">{% trans "Términos y condiciones" %}</a></li>
+				<li><a href="{% url 'ver-pagina-general' grupo.pk 'configuracion' %}">{% trans "Configuración" %}</a></li>
+				<li><a href="{% url 'grupos-estadisticas' grupo.pk %}">{% trans "Estadísticas" %}</a></li>
+				{% if grupo not in mis_grupos %}
+				<li><a href="{% url 'grupos-solicitud-miembro' grupo.pk %}">{% trans "Darse de alta" %}</a></li>
+				{% endif %}
+			</ul>
+			
+		</section>
+
+		<section class="small-12 columns">
+			
+			<h4>{% trans "Últimas entradas" %}</h4>
+			{% for item in ultimas_entradas %}
+				<br><h5><a href="{{ item.get_absolute_url }}" title="{{ item }}">{{ item }}</a></h5>
+				<div>{{ item.intro }}</div>
+				<div><i class="right"><a href="{% url 'social-perfil' item.usuario %}">@{{ item.usuario }}</a> {% trans "Publicado en: " %}{{ item.grupos }} </i></div>
+				<div><i class="right">{% trans "Hace: " %}{{ item.creada|timesince }}</i></div>
+			{% empty %}
+				<div>{% trans "No hay registros" %}</div>
+			{% endfor %}
+				
+			<br><br><h4>{% trans "Últimas propuestas" %}</h4>
+			{% for item in ultimas_propuestas %}
+				<br><h5><a href="{{ item.get_absolute_url }}" title="{{ item }}">{{ item }}</a></h5>
+				<div>{{ item.intro }}</div>
+				<div><i class="right"><a href="{% url 'social-perfil' item.usuario %}">@{{ item.usuario }}</a> {% trans "Publicado en: " %}{{ item.grupos }} </i></div>
+				<div><i class="right">{% trans "Hace: " %}{{ item.creada|timesince }}</i></div>
+			{% empty %}
+				<div>{% trans "No hay registros" %}</div>
+			{% endfor %}
+			
+			<br><br><h4>{% trans "Últimas actividades" %}</h4>
+			{% for item in ultimas_actividades %}
+				<br><h5><a href="{{ item.get_absolute_url }}" title="{{ item }}">{{ item }}</a></h4>
+				<div>{{ item.intro|slice:":300" }} {% if item.intro|length > 300 %}...{% endif %}</div>
+				<div><i class="right"><a href="{% url 'social-perfil' item.usuario %}">@{{ item.usuario }}</a> {% trans "Publicado en: " %}{{ item.grupos }} </i></div>
+				<div><i class="right">{% trans "Hace: " %}{{ item.creado|timesince }}</i></div>
+			{% empty %}
+				<div>{% trans "No hay registros" %}</div>
+			{% endfor %}
+		
+			
+		</section>
+	
+</div>
+	
+<div class="row">
+
+
+	<section class="small-12 columns">
+		
+		<h4>{% trans "Últimas intercambios públicos" %}</h4>
+		<ul>
+		{% for item in ultimos_intercambios_p %}
+			<li><a href="{% url 'social-perfil' item.origen %}">@{{ item.origen }}</a> > {{ item }} > <a href="{% url 'social-perfil' item.destino %}">@{{ item.destino }}</a> ({{ item.creado|timesince }})</li>
+		{% empty %}
+			<li>{% trans "No hay registros" %}</li>
+		{% endfor %}
+		</ul>
+		
+	</section>
+
+</div>
+
+
+{% endblock %}
+
+{% block pie %}
+	<div class="small-12-centered columns">
+
+		{% autoescape off %}
+			{{ grupo.pie_pagina }}
+		{% endautoescape %}
+
+	</div>
+{% endblock %}

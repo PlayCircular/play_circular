@@ -1,0 +1,39 @@
+{% load i18n localeurl_tags %}
+
+	<article>
+		<header>
+			<h5> 
+				{% trans "Tienes " %} {{ mis_cuentas|length }} {% trans "cuenta" %}{{ n_cuentas|pluralize }}
+			</h5>
+			
+		</header>
+		<table>
+			<tr>
+				<th>{% trans "Grupo" %}</th>
+				<th>{% trans "Cuenta" %}</th>
+				<th>{% trans "Titulares" %}</th>
+				<th>{% trans "Alias cuenta" %}</th>
+				<th>{% trans "Tipo" %}</th>
+				<th>{% trans "Margen" %}</th>
+				<th>{% trans "Creado" %}</th>
+				<th>{% trans "Saldo" %}</th>
+			</tr>
+			{% for item in mis_cuentas %}
+			<tr>
+				<td>{{ item.grupo }}</td>
+				<td><a href="{% url 'economia-index' item.pk %}">{{ item.cuenta }}</a></td>
+				<td>{{ item.titular }}</td>
+				<td>{{ item.alias }}</td>
+				<td>{{ item.tipo }}</td>
+				<td>{{ item.margen }}</td>
+				<td>{{ item.creado|date:"d/m/y" }}</td>
+				<td>{{ item.saldo }}</td>
+			</tr>
+		{% empty %}
+			<tr>
+				<td colspan="8">No hay movimientos en tu cuenta</td>
+			</tr>
+		{% endfor %}
+		<tr id="cargando-paginas" class="pelotica-invisible"></tr>
+		</table>
+	</article>

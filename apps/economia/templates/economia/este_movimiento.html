@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load i18n localeurl_tags %}
+
+
+{% block title %} Market | {{ situacion|upper }} {% endblock %}
+
+{% block content %}
+
+
+<section class="row">
+
+	<div class="twelve columns" id="contendor-central">
+	
+		<header>
+			<h4>{{ situacion|upper }}</h4>
+		</header>
+		
+		<article>
+			<table>
+				<tr>
+					<td colspan="2"><h5>{% trans "Detalle del movimiento" %}</h5></td>
+				</tr>
+				<tr>
+				<td colspan="2">
+					{% include "economia/mis_cuentas.html" %}
+				</td>
+				</tr>
+				<tr>
+					<td colspan="2">&nbsp;</td>
+				</tr>
+				<tr>
+					<td>Fecha:</td><td>{{ intercambio.creado|date:"d/m/y H:m" }}</td>
+				</tr>
+				<tr>
+					<td>Número de operación:</td><td>{{ intercambio.n_intercambio }}</td>
+				</tr>
+				<tr>
+					<td>Origen</td><td><a href="{% url 'social-perfil' intercambio.origen %}">@{{ intercambio.origen  }}</a></td>
+				</tr>
+				<tr>
+					<td>Cuenta de origen</td><td>{{ intercambio.cuenta_origen }}, {{ intercambio.cuenta_origen.alias }}</td>
+				</tr>
+				<tr>
+					<td>Cuenta de destino</td><td>{{ intercambio.cuenta_destino }}, {{ intercambio.cuenta_destino.alias }}</td>
+				</tr>
+				<tr>
+					<td>Destino</td><td><a href="{% url 'social-perfil' intercambio.destino  %}">@{{ intercambio.destino  }}</a></td>
+				</tr>
+				<tr>
+					<td>Actividad</td><td>{{ intercambio.actividad }}</td>
+				</tr>
+				<tr>
+					<td>Cantidad</td><td>{{ intercambio.cantidad }}</td>
+				</tr>
+				<tr>
+					<td>Concepto</td><td>{{ intercambio.concepto }}</td>
+				</tr>
+				<tr>
+					<td>Descripción:</td><td>{{ intercambio.descripcion }}</td>
+				</tr>
+				<tr>
+					<td>Intercambio público:</td><td>{{ intercambio.publico }}</td>
+				</tr>
+				<tr>
+					<td>Estado:</td><td>{{ intercambio.estado }}</td>
+				</tr>			
+				
+			</table>
+		</article>
+	</div> <!--Fin contendor-central-->
+</section>
+
+{% endblock %}
+
