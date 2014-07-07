@@ -66,7 +66,7 @@
 <div class="row">
 	{% if fotos_p %}
 		
-		<section class="small-9 columns">
+		<section class="small-12 columns">
 			<ul class="clearing-thumbs" data-clearing>
 			{% for foto in fotos_p %}
 				<li><a class="th" href="{{ MEDIA_URL }}{{ foto }}">
@@ -95,7 +95,7 @@
 {% if pagina.comentarios %}
 
 	<div class="row">
-		<div class="small-9 columns">
+		<div class="small-12 columns">
 			<b>{% trans "Comentarios:" %}</b>
 			{% for item in comentarios %}
 			<div>
@@ -107,12 +107,14 @@
 					{% endthumbnail %}
 					| <a href="{% url 'social-perfil' item.perfil %}">@{{ item.perfil }}</a>
 					</li>
-					</ul>
+				</ul>
+				{% else %}
+					<a href="{% url 'social-perfil' item.perfil %}">@{{ item.perfil }}</a>
 				{% endif%}
 				
 			</div>
 			<div>
-				{{ item }}
+				{{ item|urlize|linebreaks }}
 			</div>
 			<div>
 				<i class="right">{% trans "Hace: " %}{{ item.creado|timesince }}</i>
@@ -128,7 +130,7 @@
 {% if user.is_authenticated and pagina.comentarios %}
 
 	<div class="row">
-		<section class="small-9 columns">
+		<section class="small-12 columns">
 			<form action="{% url 'ver-pagina' pagina.pk pagina.pk|get_titulo_idioma:LANGUAGE_CODE|slugify %}" method="POST">
 				<table>
 					{% csrf_token %}

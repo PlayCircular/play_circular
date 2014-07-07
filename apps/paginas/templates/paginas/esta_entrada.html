@@ -23,7 +23,7 @@
 	<h3>{{ idioma.titulo }}</h3>
 	</header>
 
-	<section class="small-9 columns">
+	<section class="small-10 columns">
 		{% if entrada.usuario.is_superuser %}
 			{{ idioma.cuerpo|safe }}
 		{% else %}
@@ -109,7 +109,7 @@
 
 {% if fotos_e %}
 <div class="row">
-	<section class="small-9 columns">
+	<section class="small-12 columns">
 		<ul class="clearing-thumbs" data-clearing>
 		{% for foto in fotos_e %}
 			<li><a class="th" href="{{ MEDIA_URL }}{{ foto }}">
@@ -181,7 +181,7 @@
 </br>
 <div class="row">
 	<h5>{% trans "Entradas relacionadas:" %}</h5>
-	<section class="small-9 columns">
+	<section class="small-12 columns">
 		<ul>
 		{% for e in entrada.entradas_relacionadas.all %}
 			<li><a href="{{ e.get_absolute_url }}">{{ e }}</a></li>
@@ -196,23 +196,25 @@
 	{% for item in comentarios %}
 	<div class="row">
 
-		<div class="small-7 columns">
+		<div class="small-11 columns">
 			{% if item.perfil.una_foto.foto  %}
 			<ul class="clearing-thumbs" data-clearing>
-			<li>
-				{% thumbnail item.perfil.una_foto.foto "24x24" as im %}
-				<a class="th" href="{{ MEDIA_URL }}{{ item.perfil.una_foto.foto }}"><img src="{{ im.url }}"  alt="{{ im.name }}" width="{{ im.width }}" height="{{ im.height }}"/></a>
-				{% endthumbnail %}
-				| <a href="{% url 'social-perfil' item.perfil %}">@{{ item.perfil }}</a>
+				<li>
+					{% thumbnail item.perfil.una_foto.foto "24x24" as im %}
+					<a class="th" href="{{ MEDIA_URL }}{{ item.perfil.una_foto.foto }}"><img src="{{ im.url }}"  alt="{{ im.name }}" width="{{ im.width }}" height="{{ im.height }}"/></a>
+					{% endthumbnail %}
+					| <a href="{% url 'social-perfil' item.perfil %}">@{{ item.perfil }}</a>
 				</li>
-				</ul>
+			</ul>
+			{% else %}
+				<a href="{% url 'social-perfil' item.perfil %}">@{{ item.perfil }}</a>
 			{% endif%}
 			
 		</div>
-		<div class="small-7 columns">
-			{{ item }}
+		<div class="small-11 columns">
+			{{ item|urlize|linebreaks }}
 		</div>
-		<div class="small-7 columns">
+		<div class="small-10 columns">
 			<i class="right">{% trans "Hace: " %}{{ item.creado|timesince }}</i>
 		</div>
 		<div class="small-1 columns">
@@ -235,7 +237,7 @@
 		</div>
 	</div>
 	{% empty %}
-	<div class="row"><div class="small-7 columns">{% trans "No hay comentarios." %}</div></div>
+	<div class="row"><div class="small-11 columns">{% trans "No hay comentarios." %}</div></div>
 	{% endfor %}	
 
 {% endif %}
@@ -243,7 +245,7 @@
 {% if user.is_authenticated and entrada.comentarios %}
 
 <div class="row">
-	<section class="small-9 columns">
+	<section class="small-11 columns">
 	<form action="{% url 'ver-entrada' entrada.pk idioma.slug %}" method="POST">
 		<table>
 			{% csrf_token %}
