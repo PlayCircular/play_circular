@@ -502,7 +502,7 @@ class Comentario(MPTTModel):
 		return unicode(self.comentario)
 
 	class Meta:
-		ordering = ["creado"]
+		ordering = ["-creado"]
 		verbose_name = _(u'comentario')
 		verbose_name_plural = _(u'comentarios')
 		
