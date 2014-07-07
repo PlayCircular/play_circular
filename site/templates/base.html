@@ -188,7 +188,7 @@
 																		data-options="slide_number: false;
 																		navigation_arrows:true;
 																		bullets:false;">
-							{% for logo in mis_grupos %}
+							{% for logo in request.datos.mis_grupos %}
 							
 								<li data-orbit-slide="logo-{{ forloop.counter0 }}">
 									<div>
@@ -204,7 +204,7 @@
 						{% else %}
 						
 							<div class="centrado">
-								<img class="img_centrada" src='{% thumbnail mis_grupos.0.logo "120x120" crop="center" as im %}{{ im.url }}{% endthumbnail %}'>
+								<img class="img_centrada" src='{% thumbnail request.datos.mis_grupos.0.logo "120x120" crop="center" as im %}{{ im.url }}{% endthumbnail %}'>
 								<h4>{{ request.datos.mis_grupos.0.nombre }}</h4>
 								<h6><i>{{ request.datos.mis_grupos.0.eslogan }}</i></h6>
 							</div>
